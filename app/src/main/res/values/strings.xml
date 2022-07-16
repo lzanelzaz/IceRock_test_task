@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">IceRock_test_task</string>
+    <string name="app_name">IceRock test task</string>
+    <string name="personal_access_token">Personal access token</string>
+    <string name="sign_in_button">SIGN IN</string>
 </resources>

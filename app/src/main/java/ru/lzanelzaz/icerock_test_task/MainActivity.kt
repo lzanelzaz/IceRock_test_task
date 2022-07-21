@@ -9,6 +9,6 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_auth)
+        setContentView(R.layout.activity_main)
     }
 }

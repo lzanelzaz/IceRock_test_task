@@ -6,7 +6,6 @@
     <color name="status_bar">#161B22</color>
     <color name="accent">#438440</color>
     <color name="secondary">#58A6FF</color>
-    <color name="error">#B00020</color>
 
     <color name="background_light">@color/white</color>
     <color name="background_dark">#0D1117</color>

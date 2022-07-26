@@ -6,22 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import ru.lzanelzaz.icerock_test_task.databinding.FragmentOverviewBinding
+import ru.lzanelzaz.icerock_test_task.databinding.FragmentListRepositoriesBinding
 
-class OverviewFragment : Fragment() {
+class ListRepositoriesFragment : Fragment() {
 
-    private val viewModel : OverviewViewModel by viewModels()
+    private val viewModel: RepositoriesListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentOverviewBinding.inflate(inflater)
+        val binding = FragmentListRepositoriesBinding.inflate(inflater, container, false)
 
-        binding.lifecycleOwner = this
-        binding.viewModel = viewModel
+        binding.listRepositoriesRecyclerView.adapter = ReposListAdapter()
 
         return binding.root
     }
-
 }

@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editToken"
+        android:id="@+id/edit_token"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -29,8 +29,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo"
-        tools:ignore="DuplicateSpeakableTextCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <Button
         android:id="@+id/sign_in_button"
@@ -43,7 +42,6 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -54,8 +52,8 @@
         android:text="@string/personal_access_token"
         android:textColor="@color/secondary"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/editToken"
-        app:layout_constraintStart_toStartOf="@+id/editToken" />
+        app:layout_constraintBottom_toTopOf="@+id/edit_token"
+        app:layout_constraintStart_toStartOf="@+id/edit_token" />
 
     <TextView
         android:id="@+id/invalid_token_error"
@@ -65,7 +63,7 @@
         android:text="@string/invalid_token"
         android:textColor="@color/error"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/editToken"
-        app:layout_constraintTop_toBottomOf="@+id/editToken" />
+        app:layout_constraintStart_toStartOf="@+id/edit_token"
+        app:layout_constraintTop_toBottomOf="@+id/edit_token" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

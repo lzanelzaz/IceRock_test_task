@@ -17,7 +17,6 @@ class RepositoriesListViewModel : ViewModel() {
         object Empty : State
     }*/
 
-
     private val _repos = MutableLiveData<List<Repo>>()
     val repos : LiveData<List<Repo>> = _repos
 

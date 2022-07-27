@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/authFragment"
-    android:name="ru.lzanelzaz.icerock_test_task.AuthFragment"
+    android:id="@+id/listRepositoriesFragment"
+    android:name="ru.lzanelzaz.icerock_test_task.ListRepositoriesFragment"
     android:layout_height="match_parent"
     android:layout_width="match_parent" />

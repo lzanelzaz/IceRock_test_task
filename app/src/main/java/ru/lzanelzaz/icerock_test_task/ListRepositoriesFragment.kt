@@ -18,8 +18,8 @@ class ListRepositoriesFragment : Fragment() {
     ): View? {
         val binding = FragmentListRepositoriesBinding.inflate(inflater, container, false)
 
-        binding.listRepositoriesRecyclerView.adapter = ReposListAdapter()
-
+        binding.listRepositoriesRecyclerView.adapter = ReposListAdapter(listOf(Repo("repo", "descr", "Kotlin")))
+        binding.listRepositoriesRecyclerView.setHasFixedSize(true)
         return binding.root
     }
 }

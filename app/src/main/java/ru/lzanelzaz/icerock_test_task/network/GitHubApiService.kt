@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import ru.lzanelzaz.icerock_test_task.Repo
 
@@ -14,9 +15,9 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface GitHubApiService {
-    @Headers("Authorization: token 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")
-    @GET("users/icerockdev/repos")
-    suspend fun getRepo(): List<Repo>
+
+    @GET("users/icerockdev/repos?sort=updated&per_page=10")
+    suspend fun getRepo(@Header("Authorization") token : String): List<Repo>
 }
 
 object GitHubApi {

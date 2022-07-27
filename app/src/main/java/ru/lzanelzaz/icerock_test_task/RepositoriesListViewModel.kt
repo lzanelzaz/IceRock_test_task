@@ -18,16 +18,17 @@ class RepositoriesListViewModel : ViewModel() {
     }*/
 
     private val _repos = MutableLiveData<List<Repo>>()
-    val repos : LiveData<List<Repo>> = _repos
 
     init {
         getGitHubRepo()
     }
 
+    fun getRepositories() = _repos
+
     private fun getGitHubRepo() {
         viewModelScope.launch {
             try {
-                _repos.value = GitHubApi.retrofitService.getRepo()
+                _repos.value = AppRepository().getRepositories()
             } catch (e : Exception) {
                 println(e.message)
             }

@@ -3,4 +3,5 @@
     <string name="personal_access_token">Personal access token</string>
     <string name="sign_in_button">SIGN IN</string>
     <string name="invalid_token">Invalid token</string>
+    <string name="log_out">Log out</string>
 </resources>

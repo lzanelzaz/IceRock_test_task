@@ -1,7 +1,17 @@
 <resources>
     <string name="app_name">Repositories</string>
     <string name="personal_access_token">Personal access token</string>
-    <string name="sign_in_button">SIGN IN</string>
+    <string name="sign_in_button">Sign in</string>
     <string name="invalid_token">Invalid token</string>
+
     <string name="log_out">Log out</string>
+
+    <string name="connection_error">Connection error</string>
+    <string name="connection_error_hint">Check your Internet connection</string>
+
+    <string name="empty">Empty</string>
+    <string name="empty_hint">No repositories at the moment</string>
+
+    <string name="something_error">Something error</string>
+    <string name="something_error_hint">Check your something</string>
 </resources>

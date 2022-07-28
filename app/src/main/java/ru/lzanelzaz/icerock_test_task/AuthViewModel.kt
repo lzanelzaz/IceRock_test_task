@@ -11,7 +11,7 @@ class AuthViewModel : ViewModel() {
 //    val actions: Flow<Action>
 
     fun onSignButtonPressed() {
-        // TODO:
+        println("pressed")
     }
 
     sealed interface State {

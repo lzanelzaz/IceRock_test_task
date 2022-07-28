@@ -10,4 +10,8 @@
 
     <color name="background_light">@color/white</color>
     <color name="background_dark">#0D1117</color>
+
+    <color name="stars">#FAD876</color>
+    <color name="forks">#6ED370</color>
+    <color name="watchers">#9CFFF9</color>
 </resources>

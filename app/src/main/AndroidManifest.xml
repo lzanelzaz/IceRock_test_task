@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ru.lzanelzaz.icerock_test_task">
 
-<!--    Provides access to the Internet    -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!--    Provides access to the Internet    -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -14,13 +14,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.IceRock_test_task.SplashScreen"
+        android:theme="@style/Theme.IceRock_test_task"
         tools:targetApi="31">
 
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.IceRock_test_task.SplashScreen"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -2,6 +2,7 @@ package ru.lzanelzaz.icerock_test_task
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -22,13 +23,17 @@ class ReposListAdapter(private val dataset: List<Repo>) :
 
     override fun getItemCount(): Int = dataset.size
 
-    class ItemViewHolder(private var binding: RepoItemBinding) :
+    class ItemViewHolder(private val binding: RepoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Repo) {
             with(binding) {
                 itemName.text = item.name
                 itemLanguage.text = item.language
-                itemDescription.text = item.description
+
+                if (item.description == null)
+                    itemDescription.visibility = View.GONE
+                else
+                    itemDescription.text = item.description
 
                 itemLanguage.setLanguageColor(item.language)
             }
@@ -43,8 +48,7 @@ class ReposListAdapter(private val dataset: List<Repo>) :
 
                 val languageColor: String = JSONObject(fileContent)
                     .getJSONObject(language).optString("color")
-                    // In case of null value (R.color.accent [green])
-                    .replace("null", "#438440")
+                    .replace("null", resources.getString(R.color.white))
 
                 setTextColor(Color.parseColor(languageColor))
             }

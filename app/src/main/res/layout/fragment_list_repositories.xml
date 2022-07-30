@@ -16,9 +16,9 @@
             style="@style/Widget.IceRock_test_task.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:menu="@menu/top_app_bar"
-            app:title="@string/app_name"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
+            app:title="@string/app_name" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -64,13 +64,27 @@
             android:id="@+id/hintTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/errorTextView"
             app:layout_constraintStart_toStartOf="@+id/errorTextView"
             app:layout_constraintTop_toBottomOf="@+id/errorTextView"
             tools:text="hint" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <Button
+            android:id="@+id/retry_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

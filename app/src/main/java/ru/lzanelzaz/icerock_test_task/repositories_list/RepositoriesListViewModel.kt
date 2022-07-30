@@ -2,18 +2,19 @@ package ru.lzanelzaz.icerock_test_task.repositories_list
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import ru.lzanelzaz.icerock_test_task.KeyValueStorage
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.launch
+import ru.lzanelzaz.icerock_test_task.AppRepository
 import ru.lzanelzaz.icerock_test_task.Repo
-import ru.lzanelzaz.icerock_test_task.network.GitHubApi
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RepositoriesListViewModel : ViewModel() {
+class RepositoriesListViewModel  : ViewModel() {
 
     lateinit var state: MutableLiveData<State>
 
-    sealed interface State {
+    sealed interface State  {
         object Loading : State
         data class Loaded(val repos: List<Repo>) : State
         data class Error(val error: String) : State
@@ -21,34 +22,33 @@ class RepositoriesListViewModel : ViewModel() {
     }
 
     init {
-        state = MutableLiveData<State>()
         getState()
     }
 
     private fun getState() {
-        state.value = State.Loading
+        state = MutableLiveData<State>(State.Loading)
 
-        GitHubApi.retrofitService.getRepo(KeyValueStorage().authToken).enqueue(object :
-            Callback<List<Repo>> {
-            override fun onResponse(call: Call<List<Repo>>, response: Response<List<Repo>>) {
+        viewModelScope.launch {
+            try {
+                val repositories = AppRepository().getRepositories()
+                if (repositories == emptyList<Repo>())
+                    state.value = State.Empty
+                else
+                    state.value = State.Loaded(repositories)
 
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        state.value = State.Loaded(responseBody)
-                    } else {
-                        state.value = State.Empty
+            } catch (exception: Exception) {
+                val error = exception.toString()
+                val errorType = error.slice(0 until error.indexOf(':'))
+                println(errorType)
+
+                state.value = State.Error(
+                    when (errorType) {
+                        "java.net.UnknownHostException" -> "Connection error"
+                        else -> "Something error"
                     }
-                } else {
-                    state.value = State.Error("Something error")
-
-                }
+                )
             }
-
-            override fun onFailure(call: Call<List<Repo>>, t: Throwable) {
-                state.value = State.Error("Connection error")
-            }
-        })
+        }
 
     }
 }

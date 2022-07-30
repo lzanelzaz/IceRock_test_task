@@ -16,9 +16,11 @@ private val retrofit = Retrofit.Builder()
     .addConverterFactory(Json{ignoreUnknownKeys = true}.asConverterFactory("application/json".toMediaType()))
     .build()
 
+// bertelledani  - user with no repositories
+
 interface GitHubApiService {
     @GET("users/icerockdev/repos?sort=updated&per_page=10")
-    fun getRepo(@Header("Authorization") token : String?): Call<List<Repo>>
+    suspend fun getRepo(@Header("Authorization") token : String?): List<Repo>
 }
 
 object GitHubApi {

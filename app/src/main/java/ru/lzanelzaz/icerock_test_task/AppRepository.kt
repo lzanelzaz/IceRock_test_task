@@ -6,9 +6,9 @@ import retrofit2.Response
 import ru.lzanelzaz.icerock_test_task.network.GitHubApi
 
 class AppRepository {
-//    suspend fun getRepositories(): List<Repo> {
-//        return GitHubApi.retrofitService.getRepo(KeyValueStorage().authToken)
-//    }
+    suspend fun getRepositories(): List<Repo> {
+        return GitHubApi.retrofitService.getRepo(KeyValueStorage().authToken)
+    }
 
     /*suspend fun getRepository(repoId: String): RepoDetails {
         // TODO:

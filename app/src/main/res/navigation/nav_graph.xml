@@ -18,5 +18,9 @@
         android:id="@+id/listRepositoriesFragment"
         android:name="ru.lzanelzaz.icerock_test_task.ListRepositoriesFragment"
         android:label="ListRepositoriesFragment"
-        tools:layout="@layout/fragment_list_repositories" />
+        tools:layout="@layout/fragment_list_repositories" >
+        <action
+            android:id="@+id/action_listRepositoriesFragment_to_authFragment"
+            app:destination="@id/authFragment" />
+    </fragment>
 </navigation>

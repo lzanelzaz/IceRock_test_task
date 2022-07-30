@@ -48,7 +48,8 @@ class ReposListAdapter(private val dataset: List<Repo>) :
 
                 val languageColor: String = JSONObject(fileContent)
                     .getJSONObject(language).optString("color")
-                    .replace("null", resources.getString(R.color.white))
+                        // white color in case of null language color
+                    .replace("null", "#FFFFFFFF")
 
                 setTextColor(Color.parseColor(languageColor))
             }

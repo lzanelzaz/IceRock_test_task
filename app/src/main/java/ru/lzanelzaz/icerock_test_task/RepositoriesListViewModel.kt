@@ -3,13 +3,20 @@ package ru.lzanelzaz.icerock_test_task
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
 class RepositoriesListViewModel : ViewModel() {
 
     enum class State { LOADING, ERROR, LOADED }
 
-    val state : MutableLiveData<State> = MutableLiveData<State>(State.LOADING)
+
+    lateinit var state : MutableLiveData<State>
+
+
+    lateinit var _repos : MutableLiveData<List<Repo>>
 
 //    sealed interface State {
 //        object Loading : State
@@ -39,9 +46,10 @@ class RepositoriesListViewModel : ViewModel() {
         }
     }*/
 
-    private val _repos = MutableLiveData<List<Repo>>()
 
     init {
+        state = MutableLiveData<State>(State.LOADING)
+        _repos = MutableLiveData<List<Repo>>()
         getGitHubRepo()
     }
 

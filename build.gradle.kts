@@ -5,6 +5,7 @@ plugins {
     kotlin("android") version "1.7.10" apply false
     kotlin("plugin.serialization") version "1.7.10" apply false
     kotlin("kapt") version "1.7.10" apply false
+    id ("com.google.dagger.hilt.android") version "2.43.1" apply false
 }
 
 tasks {

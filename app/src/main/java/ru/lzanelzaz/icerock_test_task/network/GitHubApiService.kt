@@ -3,11 +3,13 @@ package ru.lzanelzaz.icerock_test_task.network
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import ru.lzanelzaz.icerock_test_task.Repo
+
+
 
 private val retrofit = Retrofit.Builder()
     .baseUrl("https://api.github.com")
@@ -15,9 +17,8 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface GitHubApiService {
-
     @GET("users/icerockdev/repos?sort=updated&per_page=10")
-    suspend fun getRepo(@Header("Authorization") token : String): List<Repo>
+    fun getRepo(@Header("Authorization") token : String?): Call<List<Repo>>
 }
 
 object GitHubApi {

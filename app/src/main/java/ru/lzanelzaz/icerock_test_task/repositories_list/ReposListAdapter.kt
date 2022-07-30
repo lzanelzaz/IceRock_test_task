@@ -1,4 +1,4 @@
-package ru.lzanelzaz.icerock_test_task
+package ru.lzanelzaz.icerock_test_task.repositories_list
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
+import ru.lzanelzaz.icerock_test_task.Repo
 import ru.lzanelzaz.icerock_test_task.databinding.RepoItemBinding
 
 class ReposListAdapter(private val dataset: List<Repo>) :

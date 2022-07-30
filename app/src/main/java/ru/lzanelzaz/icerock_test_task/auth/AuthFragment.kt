@@ -1,4 +1,4 @@
-package ru.lzanelzaz.icerock_test_task
+package ru.lzanelzaz.icerock_test_task.auth
 
 import android.graphics.Color
 import android.os.Bundle
@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ru.lzanelzaz.icerock_test_task.KeyValueStorage
+import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
 import javax.inject.Inject
 

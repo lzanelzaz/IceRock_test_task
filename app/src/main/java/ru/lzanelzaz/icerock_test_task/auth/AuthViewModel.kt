@@ -1,4 +1,4 @@
-package ru.lzanelzaz.icerock_test_task
+package ru.lzanelzaz.icerock_test_task.auth
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,12 +10,11 @@ import javax.inject.Singleton
 
 class AuthViewModel @Inject constructor() : ViewModel() {
 //    @Inject
-//    lateinit var token: MutableLiveData<String>
+    lateinit var token: MutableLiveData<String>
 //    val state: LiveData<State>
 //    val actions: Flow<Action>
 
     fun onSignButtonPressed() {
-        println("pressed")
     }
 //
 //    sealed interface State {

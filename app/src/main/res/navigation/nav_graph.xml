@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/authFragment"
-        android:name="ru.lzanelzaz.icerock_test_task.AuthFragment"
+        android:name="ru.lzanelzaz.icerock_test_task.auth.AuthFragment"
         android:label="AuthFragment"
         tools:layout="@layout/fragment_auth">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/listRepositoriesFragment"
-        android:name="ru.lzanelzaz.icerock_test_task.ListRepositoriesFragment"
+        android:name="ru.lzanelzaz.icerock_test_task.repositories_list.RepositoriesListFragment"
         android:label="ListRepositoriesFragment"
         tools:layout="@layout/fragment_list_repositories" >
         <action

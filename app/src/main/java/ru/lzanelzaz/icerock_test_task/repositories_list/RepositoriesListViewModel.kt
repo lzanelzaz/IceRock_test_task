@@ -3,12 +3,9 @@ package ru.lzanelzaz.icerock_test_task.repositories_list
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
 import ru.lzanelzaz.icerock_test_task.Repo
-import javax.inject.Inject
-import javax.inject.Singleton
 
 class RepositoriesListViewModel  : ViewModel() {
 
@@ -39,14 +36,11 @@ class RepositoriesListViewModel  : ViewModel() {
             } catch (exception: Exception) {
                 val error = exception.toString()
                 val errorType = error.slice(0 until error.indexOf(':'))
-                println(errorType)
 
-                state.value = State.Error(
-                    when (errorType) {
-                        "java.net.UnknownHostException" -> "Connection error"
-                        else -> "Something error"
-                    }
-                )
+                // "java.net.UnknownHostException" -> "Connection error"
+                // else -> "Something error"
+
+                state.value = State.Error(errorType)
             }
         }
 

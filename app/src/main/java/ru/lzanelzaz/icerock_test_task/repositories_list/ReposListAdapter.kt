@@ -5,24 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
 import ru.lzanelzaz.icerock_test_task.Repo
 import ru.lzanelzaz.icerock_test_task.databinding.RepoItemBinding
 
-class ReposListAdapter(private val dataset: List<Repo>) :
-    RecyclerView.Adapter<ReposListAdapter.ItemViewHolder>() {
+class ReposListAdapter :
+    ListAdapter<Repo, ReposListAdapter.ItemViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(RepoItemBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val item = dataset[position]
+        val item = getItem(position)
         holder.bind(item)
     }
-
-    override fun getItemCount(): Int = dataset.size
 
     class ItemViewHolder(private val binding: RepoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -49,11 +49,22 @@ class ReposListAdapter(private val dataset: List<Repo>) :
 
                 val languageColor: String = JSONObject(fileContent)
                     .getJSONObject(language).optString("color")
-                        // white color in case of null language color
+                    // white color in case of null language color
                     .replace("null", "#FFFFFFFF")
 
                 setTextColor(Color.parseColor(languageColor))
             }
         }
+    }
+
+    class DiffCallback: DiffUtil.ItemCallback<Repo>() {
+        override fun areItemsTheSame(oldItem: Repo, newItem: Repo): Boolean {
+            return oldItem.name == newItem.name
+        }
+
+        override fun areContentsTheSame(oldItem: Repo, newItem: Repo): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }

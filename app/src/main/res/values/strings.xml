@@ -10,7 +10,7 @@
     <string name="connection_error_hint">Check your Internet connection</string>
 
     <string name="empty_error">Empty</string>
-    <string name="empty_hint">No repositories at the moment</string>
+    <string name="empty_error_hint">No repositories at the moment</string>
 
     <string name="something_error">Something error</string>
     <string name="something_error_hint">Check your something</string>

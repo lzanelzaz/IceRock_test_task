@@ -9,8 +9,6 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import ru.lzanelzaz.icerock_test_task.Repo
 
-
-
 private val retrofit = Retrofit.Builder()
     .baseUrl("https://api.github.com")
     .addConverterFactory(Json{ignoreUnknownKeys = true}.asConverterFactory("application/json".toMediaType()))

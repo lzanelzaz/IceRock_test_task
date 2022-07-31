@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import ru.lzanelzaz.icerock_test_task.R
 
-class DetailInfoFragment : Fragment() {
+class RepositorylInfoFragment : Fragment() {
 
     lateinit var viewModel: RepositoryInfoViewModel
 
@@ -15,7 +15,7 @@ class DetailInfoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_detail_info, container, false)
+        return inflater.inflate(R.layout.fragment_repository_info, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

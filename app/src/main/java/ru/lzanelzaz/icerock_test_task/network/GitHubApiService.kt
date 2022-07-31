@@ -7,7 +7,9 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import ru.lzanelzaz.icerock_test_task.Repo
+import ru.lzanelzaz.icerock_test_task.UserInfo
 
 private val retrofit = Retrofit.Builder()
     .baseUrl("https://api.github.com")
@@ -18,7 +20,10 @@ private val retrofit = Retrofit.Builder()
 
 interface GitHubApiService {
     @GET("users/icerockdev/repos?sort=updated&per_page=10")
-    suspend fun getRepo(@Header("Authorization") token : String?): List<Repo>
+    suspend fun getRepo(): List<Repo>
+
+    @GET("user")
+    suspend fun getUser(@Header("Authorization") token : String): UserInfo
 }
 
 object GitHubApi {

@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/logo"
@@ -16,20 +15,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/personal_access_token_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:alpha="0.5"
+        android:text="@string/personal_access_token"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/edit_token"
+        app:layout_constraintStart_toStartOf="@+id/edit_token"
+        tools:visibility="visible" />
+
     <EditText
+        android:alpha="0.5"
         android:id="@+id/edit_token"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
         android:hint="@string/personal_access_token"
         android:inputType="textPersonName"
         android:minHeight="48dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+    <TextView
+        android:id="@+id/invalid_token_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="@string/invalid_token"
+        android:textColor="@color/error"
+        android:textSize="12sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/edit_token"
+        app:layout_constraintTop_toBottomOf="@+id/edit_token" />
 
     <Button
         android:id="@+id/sign_in_button"
@@ -42,28 +71,8 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:textCursorDrawable="@drawable/loading_animation"/>
 
-    <TextView
-        android:id="@+id/personal_access_token_hint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="@string/personal_access_token"
-        android:textColor="@color/secondary"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/edit_token"
-        app:layout_constraintStart_toStartOf="@+id/edit_token" />
-
-    <TextView
-        android:id="@+id/invalid_token_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="@string/invalid_token"
-        android:textColor="@color/error"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/edit_token"
-        app:layout_constraintTop_toBottomOf="@+id/edit_token" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,11 +27,12 @@ class RepositoriesListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        updateView()
+        bindToViewModel()
 
         binding.stateViewLayout.retryButton.setOnClickListener {
-            updateView()
+            bindToViewModel()
         }
 
         binding.topAppBar.setOnMenuItemClickListener {
@@ -46,7 +47,7 @@ class RepositoriesListFragment : Fragment() {
         }
     }
 
-    private fun updateView() {
+    private fun bindToViewModel() {
         val viewModel = RepositoriesListViewModel()
         viewModel.state.observe(viewLifecycleOwner) { state ->
             // Toolbar
@@ -66,7 +67,7 @@ class RepositoriesListFragment : Fragment() {
                 statusImageView.setImageResource(getImageResource(state))
 
                 errorTextView.text = getErrorText(state)
-                errorTextView.setTextColor(resources.getColor(getErrorTextColor(state)))
+                errorTextView.setTextColor(getErrorTextColor(state))
 
                 hintTextView.text = getErrorHintText(state)
 
@@ -124,11 +125,12 @@ class RepositoriesListFragment : Fragment() {
         else -> null
     }
 
-    private fun getErrorTextColor(state: RepositoriesListViewModel.State): Int = when (state) {
+    private fun getErrorTextColor(state: RepositoriesListViewModel.State): Int = resources.getColor(when (state) {
         is RepositoriesListViewModel.State.Error -> R.color.error
         is RepositoriesListViewModel.State.Empty -> R.color.secondary
         else -> R.color.white
     }
+    )
 
     private fun getRetryButtonText(state: RepositoriesListViewModel.State): String? = when (state) {
         is RepositoriesListViewModel.State.Error -> resources.getString(R.string.retry_button)

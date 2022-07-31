@@ -19,7 +19,7 @@
             app:navigationIcon="@drawable/arrow_back" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    
+
     <include
         android:id="@+id/state_view"
         layout="@layout/state_view"

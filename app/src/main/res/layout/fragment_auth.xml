@@ -30,13 +30,13 @@
         tools:visibility="visible" />
 
     <EditText
-        android:alpha="0.5"
         android:id="@+id/edit_token"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
+        android:alpha="0.5"
         android:backgroundTint="@color/white"
         android:hint="@string/personal_access_token"
         android:inputType="textPersonName"
@@ -60,6 +60,18 @@
         app:layout_constraintStart_toStartOf="@+id/edit_token"
         app:layout_constraintTop_toBottomOf="@+id/edit_token" />
 
+    <ImageView
+        android:id="@+id/loadingImageView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:elevation="10dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/sign_in_button"
+        app:layout_constraintEnd_toEndOf="@+id/sign_in_button"
+        app:layout_constraintStart_toStartOf="@+id/sign_in_button"
+        app:layout_constraintTop_toTopOf="@+id/sign_in_button"
+        app:srcCompat="@drawable/loading_animation" />
+
     <Button
         android:id="@+id/sign_in_button"
         android:layout_width="0dp"
@@ -71,8 +83,6 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:textCursorDrawable="@drawable/loading_animation"/>
-
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

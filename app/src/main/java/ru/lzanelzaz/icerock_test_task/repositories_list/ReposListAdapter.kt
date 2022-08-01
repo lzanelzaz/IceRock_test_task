@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
+import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.Repo
 import ru.lzanelzaz.icerock_test_task.databinding.RepoItemBinding
+import ru.lzanelzaz.icerock_test_task.repository_info.RepositorylInfoFragment
 
 class ReposListAdapter :
     ListAdapter<Repo, ReposListAdapter.ItemViewHolder>(DiffCallback()) {
@@ -22,6 +25,14 @@ class ReposListAdapter :
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
+
+        holder.itemView.setOnClickListener { view ->
+            view.findNavController()
+                .navigate(
+                    R.id.action_listRepositoriesFragment_to_repositorylInfoFragment,
+                    RepositorylInfoFragment.createArguments(repoId = item.name)
+                )
+        }
     }
 
     class ItemViewHolder(private val binding: RepoItemBinding) :
@@ -57,7 +68,7 @@ class ReposListAdapter :
         }
     }
 
-    class DiffCallback: DiffUtil.ItemCallback<Repo>() {
+    class DiffCallback : DiffUtil.ItemCallback<Repo>() {
         override fun areItemsTheSame(oldItem: Repo, newItem: Repo): Boolean {
             return oldItem.name == newItem.name
         }

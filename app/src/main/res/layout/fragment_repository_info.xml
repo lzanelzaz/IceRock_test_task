@@ -3,12 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:liftOnScroll="true">
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/top_app_bar"
             style="@style/Widget.IceRock_test_task.Toolbar"
@@ -17,11 +22,195 @@
             app:layout_scrollFlags="noScroll"
             app:menu="@menu/top_app_bar"
             app:navigationIcon="@drawable/arrow_back" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <include
-        android:id="@+id/state_view"
+        android:id="@+id/state_view_layout"
         layout="@layout/state_view"
         android:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/repository_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+
+        <ImageView
+            android:id="@+id/link_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/link" />
+
+        <TextView
+            android:id="@+id/link_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/secondary"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/link_image_view"
+            app:layout_constraintStart_toEndOf="@+id/link_image_view"
+            app:layout_constraintTop_toTopOf="@+id/link_image_view"
+            tools:text="link" />
+
+        <ImageView
+            android:id="@+id/license_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/double_default_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/link_image_view"
+            app:srcCompat="@drawable/license" />
+
+        <ImageView
+            android:id="@+id/forks_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/stars_image_view"
+            app:layout_constraintStart_toStartOf="@+id/forks_guideline"
+            app:layout_constraintTop_toTopOf="@+id/stars_image_view"
+            app:srcCompat="@drawable/forks" />
+
+        <ImageView
+            android:id="@+id/stars_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/double_default_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/license_image_view"
+            app:srcCompat="@drawable/stars" />
+
+        <ImageView
+            android:id="@+id/watchers_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/stars_image_view"
+            app:layout_constraintStart_toStartOf="@+id/watchers_guideline"
+            app:layout_constraintTop_toTopOf="@+id/stars_image_view"
+            app:srcCompat="@drawable/watchers" />
+
+        <TextView
+            android:id="@+id/license_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/double_default_margin"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/license"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/license"
+            tools:text="license" />
+
+        <TextView
+            android:id="@+id/stars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="@string/stars"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/stars_image_view"
+            app:layout_constraintEnd_toStartOf="@+id/forks_guideline"
+            app:layout_constraintTop_toTopOf="@+id/stars_image_view" />
+
+        <TextView
+            android:id="@+id/watchers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="@string/watchers"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/watchers_count"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/watchers_count" />
+
+        <TextView
+            android:id="@+id/forks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="@string/forks"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/forks_count"
+            app:layout_constraintEnd_toStartOf="@+id/watchers_guideline"
+            app:layout_constraintTop_toTopOf="@+id/forks_count" />
+
+        <TextView
+            android:id="@+id/stars_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/stars"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/stars_image_view"
+            app:layout_constraintEnd_toStartOf="@+id/stars"
+            app:layout_constraintStart_toEndOf="@+id/stars_image_view"
+            app:layout_constraintTop_toTopOf="@+id/stars_image_view"
+            tools:text="10" />
+
+        <TextView
+            android:id="@+id/forks_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/forks"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/forks_image_view"
+            app:layout_constraintEnd_toStartOf="@+id/forks"
+            app:layout_constraintStart_toEndOf="@+id/forks_image_view"
+            app:layout_constraintTop_toTopOf="@+id/forks_image_view"
+            tools:text="10" />
+
+        <TextView
+            android:id="@+id/watchers_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/watchers"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/watchers_image_view"
+            app:layout_constraintEnd_toStartOf="@+id/watchers"
+            app:layout_constraintStart_toEndOf="@+id/watchers_image_view"
+            app:layout_constraintTop_toTopOf="@+id/watchers_image_view"
+            app:layout_constraintVertical_bias="0.666"
+            tools:text="10" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/forks_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.32" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/watchers_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.62" />
+
+        <TextView
+            android:id="@+id/license"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/license"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/license_image_view"
+            app:layout_constraintStart_toEndOf="@+id/license_image_view"
+            app:layout_constraintTop_toTopOf="@+id/license_image_view" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

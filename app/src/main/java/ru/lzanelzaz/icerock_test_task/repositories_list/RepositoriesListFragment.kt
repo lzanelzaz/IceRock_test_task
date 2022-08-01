@@ -13,6 +13,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentListRepositoriesBinding
 
+typealias State = RepositoriesListViewModel.State
+typealias Loading = RepositoriesListViewModel.State.Loading
+typealias Loaded = RepositoriesListViewModel.State.Loaded
+typealias Error = RepositoriesListViewModel.State.Error
+typealias Empty = RepositoriesListViewModel.State.Empty
+
 @AndroidEntryPoint
 class RepositoriesListFragment : Fragment() {
 
@@ -52,7 +58,7 @@ class RepositoriesListFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             // Toolbar
             binding.topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
-                scrollFlags = if (state is RepositoriesListViewModel.State.Loaded)
+                scrollFlags = if (state is Loaded)
                     SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 else SCROLL_FLAG_NO_SCROLL
             }
@@ -62,7 +68,7 @@ class RepositoriesListFragment : Fragment() {
             with(binding.stateViewLayout) {
                 // Error/ loading view
                 stateView.visibility =
-                    if (state is RepositoriesListViewModel.State.Loaded) View.GONE else View.VISIBLE
+                    if (state is Loaded) View.GONE else View.VISIBLE
 
                 statusImageView.setImageResource(getImageResource(state))
 
@@ -72,15 +78,15 @@ class RepositoriesListFragment : Fragment() {
                 hintTextView.text = getErrorHintText(state)
 
                 retryButton.visibility =
-                    if (state is RepositoriesListViewModel.State.Loading) View.GONE else View.VISIBLE
+                    if (state is Loading) View.GONE else View.VISIBLE
                 retryButton.text = getRetryButtonText(state)
             }
         }
     }
 
-    private fun getRecyclerViewAdapter(state: RepositoriesListViewModel.State): ReposListAdapter {
+    private fun getRecyclerViewAdapter(state: State): ReposListAdapter {
         val myRecyclerViewAdapter = ReposListAdapter()
-        val dataset = if (state is RepositoriesListViewModel.State.Loaded)
+        val dataset = if (state is Loaded)
             state.repos
         else
             emptyList()
@@ -90,51 +96,51 @@ class RepositoriesListFragment : Fragment() {
 
     // State.Error, State.Empty, State.Loading -> resId
     // State.Loaded -> non
-    private fun getImageResource(state: RepositoriesListViewModel.State): Int = when (state) {
-        is RepositoriesListViewModel.State.Loading -> R.drawable.loading_animation
-        is RepositoriesListViewModel.State.Error ->
+    private fun getImageResource(state: State): Int = when (state) {
+        is Loading -> R.drawable.loading_animation
+        is Error ->
             when (state.error) {
                 "java.net.UnknownHostException" -> R.drawable.connection_error
                 else -> R.drawable.something_error
             }
-        is RepositoriesListViewModel.State.Empty -> R.drawable.empty_error
+        is Empty -> R.drawable.empty_error
         else -> 0
     }
 
     // State.Error, State.Empty -> String
     // State.Loaded, State.Loading -> null
-    private fun getErrorText(state: RepositoriesListViewModel.State): String? = when (state) {
-        is RepositoriesListViewModel.State.Error ->
+    private fun getErrorText(state: State): String? = when (state) {
+        is Error ->
             when (state.error) {
                 "java.net.UnknownHostException" -> resources.getString(R.string.connection_error)
                 else -> resources.getString(R.string.something_error)
             }
-        is RepositoriesListViewModel.State.Empty -> resources.getString(R.string.empty_error)
+        is Empty -> resources.getString(R.string.empty_error)
         else -> null
     }
 
     // State.Error, State.Empty -> String
     // State.Loaded, State.Loading -> null
-    private fun getErrorHintText(state: RepositoriesListViewModel.State): String? = when (state) {
-        is RepositoriesListViewModel.State.Error ->
+    private fun getErrorHintText(state: State): String? = when (state) {
+        is Error ->
             when (state.error) {
                 "java.net.UnknownHostException" -> resources.getString(R.string.connection_error_hint)
                 else -> resources.getString(R.string.something_error_hint)
             }
-        is RepositoriesListViewModel.State.Empty -> resources.getString(R.string.empty_error_hint)
+        is Empty -> resources.getString(R.string.empty_error_hint)
         else -> null
     }
 
-    private fun getErrorTextColor(state: RepositoriesListViewModel.State): Int = resources.getColor(when (state) {
-        is RepositoriesListViewModel.State.Error -> R.color.error
-        is RepositoriesListViewModel.State.Empty -> R.color.secondary
+    private fun getErrorTextColor(state: State): Int = resources.getColor(when (state) {
+        is Error -> R.color.error
+        is Empty -> R.color.secondary
         else -> R.color.white
     }
     )
 
-    private fun getRetryButtonText(state: RepositoriesListViewModel.State): String? = when (state) {
-        is RepositoriesListViewModel.State.Error -> resources.getString(R.string.retry_button)
-        is RepositoriesListViewModel.State.Empty -> resources.getString(R.string.refresh_button)
+    private fun getRetryButtonText(state: State): String? = when (state) {
+        is Error -> resources.getString(R.string.retry_button)
+        is Empty -> resources.getString(R.string.refresh_button)
         else -> null
     }
 }

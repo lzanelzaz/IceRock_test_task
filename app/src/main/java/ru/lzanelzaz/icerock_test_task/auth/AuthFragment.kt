@@ -13,7 +13,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
+import ru.lzanelzaz.icerock_test_task.repositories_list.RepositoriesListViewModel
 import javax.inject.Inject
+
+typealias State = AuthViewModel.State
+typealias Loading = AuthViewModel.State.Loading
+typealias InvalidInput = AuthViewModel.State.InvalidInput
+typealias Idle = AuthViewModel.State.Idle
 
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
@@ -37,46 +43,46 @@ class AuthFragment : Fragment() {
     }
 
     private fun bindToViewModel() {
-        viewModel = AuthViewModel()
 
         binding.editToken.doOnTextChanged { text, _, _, _ ->
             binding.editToken.alpha = if (text.isNullOrEmpty()) 0.5F else 1F
         }
 
         binding.signInButton.setOnClickListener { view: View ->
+            viewModel = AuthViewModel()
             viewModel.token.value = binding.editToken.text.toString()
             viewModel.onSignButtonPressed()
             viewModel.state.observe(viewLifecycleOwner) { state ->
                 with(binding) {
                     loadingImageView.visibility =
-                        if (state is AuthViewModel.State.Loading) View.VISIBLE else View.INVISIBLE
+                        if (state is InvalidInput) View.GONE else View.VISIBLE
                     signInButton.text =
-                        if (state !is AuthViewModel.State.Loading) resources.getString(R.string.sign_in_button) else null
+                        if (state is InvalidInput) resources.getString(R.string.sign_in_button) else null
 
                     personalAccessTokenHint.visibility = View.VISIBLE
                     personalAccessTokenHint.setTextColor(getPersonalAccessTokenHintColor(state))
                     personalAccessTokenHint.alpha =
-                        if (state is AuthViewModel.State.Loading) 0.5F else 1F
+                        if (state is Loading) 0.5F else 1F
 
                     editToken.backgroundTintList = ColorStateList.valueOf(
                         getPersonalAccessTokenHintColor(state)
                     )
 
                     invalidTokenError.visibility =
-                        if (state is AuthViewModel.State.InvalidInput) View.VISIBLE else View.INVISIBLE
+                        if (state is InvalidInput) View.VISIBLE else View.INVISIBLE
                     invalidTokenError.text = resources.getString(R.string.invalid_token)
                 }
-                if (state is AuthViewModel.State.Idle)
+                if (state is Idle)
                     view.findNavController()
                         .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
             }
         }
     }
 
-    private fun getPersonalAccessTokenHintColor(state: AuthViewModel.State) = resources.getColor(
+    private fun getPersonalAccessTokenHintColor(state: State) = resources.getColor(
         when (state) {
-            is AuthViewModel.State.InvalidInput -> R.color.error
-            is AuthViewModel.State.Loading -> R.color.white
+            is InvalidInput -> R.color.error
+            is Loading -> R.color.white
             else -> R.color.secondary
         }
     )

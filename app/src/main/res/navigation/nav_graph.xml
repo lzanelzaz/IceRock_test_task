@@ -18,9 +18,24 @@
         android:id="@+id/listRepositoriesFragment"
         android:name="ru.lzanelzaz.icerock_test_task.repositories_list.RepositoriesListFragment"
         android:label="ListRepositoriesFragment"
-        tools:layout="@layout/fragment_list_repositories" >
+        tools:layout="@layout/fragment_list_repositories">
         <action
             android:id="@+id/action_listRepositoriesFragment_to_authFragment"
             app:destination="@id/authFragment" />
+        <action
+            android:id="@+id/action_listRepositoriesFragment_to_repositorylInfoFragment"
+            app:destination="@id/repositorylInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/repositorylInfoFragment"
+        android:name="ru.lzanelzaz.icerock_test_task.repository_info.RepositorylInfoFragment"
+        android:label="RepositorylInfoFragment"
+        tools:layout="@layout/fragment_repository_info" >
+        <action
+            android:id="@+id/action_repositorylInfoFragment_to_authFragment"
+            app:destination="@id/authFragment" />
+        <action
+            android:id="@+id/action_repositorylInfoFragment_to_listRepositoriesFragment"
+            app:destination="@id/listRepositoriesFragment" />
     </fragment>
 </navigation>

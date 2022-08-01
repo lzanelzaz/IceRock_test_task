@@ -17,4 +17,9 @@
 
     <string name="retry_button">Retry</string>
     <string name="refresh_button">Refresh</string>
+
+    <string name="license">License</string>
+    <string name="stars">stars</string>
+    <string name="forks">forks</string>
+    <string name="watchers">watchers</string>
 </resources>

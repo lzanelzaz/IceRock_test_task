@@ -1,5 +1,6 @@
 package ru.lzanelzaz.icerock_test_task.auth
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -11,6 +12,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.lzanelzaz.icerock_test_task.KeyValueStorage
+import ru.lzanelzaz.icerock_test_task.MainActivity
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
 import ru.lzanelzaz.icerock_test_task.repositories_list.RepositoriesListViewModel
@@ -23,8 +25,6 @@ typealias Idle = AuthViewModel.State.Idle
 
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
-
-    lateinit var viewModel: AuthViewModel
 
     lateinit var binding: FragmentAuthBinding
 
@@ -39,6 +39,13 @@ class AuthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val sharedPref = activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
+        if (sharedPref?.getString("authToken", null) != null) {
+            KeyValueStorage.authToken = sharedPref.getString("authToken", null)
+            view.findNavController()
+                .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
+        }
+
         bindToViewModel()
     }
 
@@ -49,7 +56,7 @@ class AuthFragment : Fragment() {
         }
 
         binding.signInButton.setOnClickListener { view: View ->
-            viewModel = AuthViewModel()
+            val viewModel = AuthViewModel()
             viewModel.token.value = binding.editToken.text.toString()
             viewModel.onSignButtonPressed()
             viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -72,9 +79,16 @@ class AuthFragment : Fragment() {
                         if (state is InvalidInput) View.VISIBLE else View.INVISIBLE
                     invalidTokenError.text = resources.getString(R.string.invalid_token)
                 }
-                if (state is Idle)
+                if (state is Idle) {
+                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                    val editor = sharedPref?.edit()
+                    editor?.putString("authToken", KeyValueStorage.authToken)
+                    editor?.commit()
+
                     view.findNavController()
                         .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
+                }
+
             }
         }
     }

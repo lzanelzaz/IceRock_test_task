@@ -29,10 +29,10 @@ interface GitHubApiService {
     suspend fun signIn(@Header("Authorization") token: String): UserInfo
 
     @GET("users/icerockdev/repos?sort=updated&per_page=10")
-    suspend fun getRepositories(): List<Repo>
+    suspend fun getRepositories(@Header("Authorization") token: String): List<Repo>
 
     @GET("repos/icerockdev/{repoId}")
-    suspend fun getRepository(@Path("repoId") repoId: String): RepoDetails
+    suspend fun getRepository(@Header("Authorization") token: String, @Path("repoId") repoId: String): RepoDetails
 
     @GET("https://raw.githubusercontent.com/{ownerName}/{repositoryName}/{branchName}/README.md")
     suspend fun getRepositoryReadme(

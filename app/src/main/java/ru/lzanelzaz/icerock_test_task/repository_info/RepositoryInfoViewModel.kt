@@ -1,5 +1,7 @@
 package ru.lzanelzaz.icerock_test_task.repository_info
 
+import androidx.constraintlayout.motion.widget.Debug.getState
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +10,9 @@ import ru.lzanelzaz.icerock_test_task.AppRepository
 import ru.lzanelzaz.icerock_test_task.RepoDetails
 
 class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
-    var state = MutableLiveData<State>(State.Loading)
+    private val state: MutableLiveData<State> by lazy {
+        MutableLiveData<State>(State.Loading).also { loadState() }
+    }
 
     sealed interface State {
         object Loading : State
@@ -27,10 +31,9 @@ class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
         data class Loaded(val markdown: String) : ReadmeState
     }
 
-init {
-    getState()
-}
-    private fun getState() {
+    fun getState(): LiveData<State> = state
+
+    private fun loadState() {
         viewModelScope.launch {
             try {
                 val repository: RepoDetails = AppRepository().getRepository(repoId)

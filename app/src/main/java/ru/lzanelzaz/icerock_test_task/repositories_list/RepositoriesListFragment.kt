@@ -1,5 +1,6 @@
 package ru.lzanelzaz.icerock_test_task.repositories_list
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.navigation.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import dagger.hilt.android.AndroidEntryPoint
+import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentListRepositoriesBinding
 
@@ -44,6 +46,10 @@ class RepositoriesListFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.log_out -> {
+                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                    val editor = sharedPref?.edit()
+                    editor?.clear()
+                    editor?.commit()
                     view.findNavController()
                         .navigate(R.id.action_listRepositoriesFragment_to_authFragment)
                     true
@@ -55,7 +61,7 @@ class RepositoriesListFragment : Fragment() {
 
     private fun bindToViewModel() {
         val viewModel = RepositoriesListViewModel()
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        viewModel.getState().observe(viewLifecycleOwner) { state ->
             // Toolbar
             binding.topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
                 scrollFlags = if (state is Loaded)

@@ -1,5 +1,6 @@
 package ru.lzanelzaz.icerock_test_task.repositories_list
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,24 +8,22 @@ import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
 import ru.lzanelzaz.icerock_test_task.Repo
 
-class RepositoriesListViewModel  : ViewModel() {
+class RepositoriesListViewModel : ViewModel() {
 
-    lateinit var state: MutableLiveData<State>
+    private val state: MutableLiveData<State> by lazy {
+        MutableLiveData<State>(State.Loading).also { loadState() }
+    }
 
-    sealed interface State  {
+    sealed interface State {
         object Loading : State
         data class Loaded(val repos: List<Repo>) : State
         data class Error(val error: String) : State
         object Empty : State
     }
 
-    init {
-        getState()
-    }
+    fun getState() : LiveData<State> = state
 
-    private fun getState() {
-        state = MutableLiveData<State>(State.Loading)
-
+    private fun loadState() {
         viewModelScope.launch {
             try {
                 val repositories = AppRepository().getRepositories()
@@ -43,6 +42,5 @@ class RepositoriesListViewModel  : ViewModel() {
                 state.value = State.Error(errorType)
             }
         }
-
     }
 }

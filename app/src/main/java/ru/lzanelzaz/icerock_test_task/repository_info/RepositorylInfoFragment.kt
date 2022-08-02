@@ -1,5 +1,6 @@
 package ru.lzanelzaz.icerock_test_task.repository_info
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,15 +21,12 @@ typealias Error = RepositoryInfoViewModel.State.Error
 
 class RepositorylInfoFragment : Fragment() {
 
-    lateinit var viewModel: RepositoryInfoViewModel
     lateinit var binding: FragmentRepositoryInfoBinding
-    lateinit var repoId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        repoId = requireArguments().getString(REPO_ID).let { requireNotNull(it) }
         binding = FragmentRepositoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,6 +45,10 @@ class RepositorylInfoFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.log_out -> {
+                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                    val editor = sharedPref?.edit()
+                    editor?.clear()
+                    editor?.commit()
                     view.findNavController()
                         .navigate(R.id.action_repositorylInfoFragment_to_authFragment)
                     true
@@ -65,9 +67,10 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     private fun bindToViewModel() {
-        viewModel = RepositoryInfoViewModel(repoId)
+        val repoId = requireArguments().getString(REPO_ID).let { requireNotNull(it) }
+        val viewModel = RepositoryInfoViewModel(repoId)
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        viewModel.getState().observe(viewLifecycleOwner) { state ->
             with(binding) {
                 topAppBar.title = repoId
                 repositoryView.visibility =

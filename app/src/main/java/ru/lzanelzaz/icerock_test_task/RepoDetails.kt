@@ -14,6 +14,7 @@ data class RepoDetails(
     val stars: Int,
     @SerialName("subscribers_count")
     val watchers: Int,
+    val owner: Owner,
     @SerialName("default_branch")
     val defaultBranch: String
 )
@@ -22,4 +23,9 @@ data class RepoDetails(
 data class License(
     @SerialName("spdx_id")
     val id: String
+)
+
+@Serializable
+data class Owner(
+    val login: String
 )

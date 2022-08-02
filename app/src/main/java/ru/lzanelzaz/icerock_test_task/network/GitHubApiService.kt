@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -17,24 +18,41 @@ private val json = Json {
     ignoreUnknownKeys = true
 }
 
-private val retrofit = Retrofit.Builder()
+private val apiGithub = Retrofit.Builder()
     .baseUrl("https://api.github.com")
     .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
     .build()
 
-// bertelledani  - user with no repositories
-
-interface GitHubApiService {
+interface GithubApiService {
     @GET("user")
     suspend fun signIn(@Header("Authorization") token: String): UserInfo
+
+    // bertelledani  - user with no repositories
+    // orgs/echo-health/repos EchoTestApp - no readme
 
     @GET("users/icerockdev/repos?sort=updated&per_page=10")
     suspend fun getRepositories(@Header("Authorization") token: String): List<Repo>
 
     @GET("repos/icerockdev/{repoId}")
-    suspend fun getRepository(@Header("Authorization") token: String, @Path("repoId") repoId: String): RepoDetails
+    suspend fun getRepository(
+        @Header("Authorization") token: String,
+        @Path("repoId") repoId: String
+    ): RepoDetails
+}
 
-    @GET("https://raw.githubusercontent.com/{ownerName}/{repositoryName}/{branchName}/README.md")
+object GithubApi {
+    val retrofitService: GithubApiService by lazy {
+        apiGithub.create(GithubApiService::class.java)
+    }
+}
+
+private val rawGithubUserContent = Retrofit.Builder()
+    .baseUrl("https://raw.githubusercontent.com")
+    .addConverterFactory(ScalarsConverterFactory.create())
+    .build()
+
+interface GithubRawUserContentService {
+    @GET("{ownerName}/{repositoryName}/{branchName}/README.md")
     suspend fun getRepositoryReadme(
         @Path("ownerName") ownerName: String,
         @Path("repositoryName") repositoryName: String,
@@ -42,8 +60,8 @@ interface GitHubApiService {
     ): String
 }
 
-object GitHubApi {
-    val retrofitService: GitHubApiService by lazy {
-        retrofit.create(GitHubApiService::class.java)
+object GithubRawUserContent {
+    val retrofitService: GithubRawUserContentService by lazy {
+        rawGithubUserContent.create(GithubRawUserContentService::class.java)
     }
 }

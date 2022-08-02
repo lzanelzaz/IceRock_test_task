@@ -3,6 +3,7 @@ package ru.lzanelzaz.icerock_test_task.auth
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
 import javax.inject.Inject
 
+@HiltViewModel
 class AuthViewModel @Inject constructor() : ViewModel() {
     //    @Inject
     val token = MutableLiveData<String>()
@@ -27,8 +29,9 @@ class AuthViewModel @Inject constructor() : ViewModel() {
                 val error = exception.toString()
                 val errorType = error.slice(0 until error.indexOf(':'))
 
-                // "retrofit2.HttpException " -> Invalid token
-                // else -> Error data / error code information for developers
+                // "retrofit2.HttpException" -> Error data / error code information for developers
+                //  "java.net.UnknownHostException" -> "Connection error"
+                // else -> Invalid token
                 state.value = State.InvalidInput(errorType)
             }
         }

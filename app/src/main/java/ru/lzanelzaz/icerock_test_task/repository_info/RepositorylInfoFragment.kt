@@ -7,17 +7,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
+import androidx.core.view.updateLayoutParams
 import androidx.navigation.findNavController
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
+import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
+import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.parser.MarkdownParser
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
-import ru.lzanelzaz.icerock_test_task.repositories_list.ReposListAdapter
-import ru.lzanelzaz.icerock_test_task.repositories_list.RepositoriesListViewModel
+
 
 typealias State = RepositoryInfoViewModel.State
 typealias Loading = RepositoryInfoViewModel.State.Loading
 typealias Loaded = RepositoryInfoViewModel.State.Loaded
 typealias Error = RepositoryInfoViewModel.State.Error
+
+typealias ReadmeState = RepositoryInfoViewModel.ReadmeState
+typealias ReadmeLoading = RepositoryInfoViewModel.ReadmeState.Loading
+typealias ReadmeLoaded = RepositoryInfoViewModel.ReadmeState.Loaded
+typealias ReadmeError = RepositoryInfoViewModel.ReadmeState.Error
+typealias ReadmeEmpty = RepositoryInfoViewModel.ReadmeState.Empty
 
 class RepositorylInfoFragment : Fragment() {
 
@@ -45,7 +58,8 @@ class RepositorylInfoFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.log_out -> {
-                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                    val sharedPref =
+                        activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
                     val editor = sharedPref?.edit()
                     editor?.clear()
                     editor?.commit()
@@ -73,6 +87,13 @@ class RepositorylInfoFragment : Fragment() {
         viewModel.getState().observe(viewLifecycleOwner) { state ->
             with(binding) {
                 topAppBar.title = repoId
+
+                topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
+                    scrollFlags = if (state is Loaded && state.readmeState is ReadmeLoaded)
+                        SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
+                    else SCROLL_FLAG_NO_SCROLL
+                }
+
                 repositoryView.visibility =
                     if (state is Loaded) View.VISIBLE else View.INVISIBLE
                 val githubRepo: RepoDetails? =
@@ -96,7 +117,39 @@ class RepositorylInfoFragment : Fragment() {
                 hintTextView.text = getErrorHintText(state)
 
                 retryButton.visibility =
-                    if (state is RepositoryInfoViewModel.State.Loading) View.GONE else View.VISIBLE
+                    if (state is Loading) View.GONE else View.VISIBLE
+            }
+
+            if (state is Loaded) {
+                val readmeState = state.readmeState
+
+                binding.readmeTextView.text =
+                    if (readmeState is ReadmeLoaded) {
+                        val markdown = readmeState.markdown
+                        // delete badges
+                        val src = markdown.drop(markdown.indexOf('#'))
+
+                        val flavour = CommonMarkFlavourDescriptor()
+                        val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(src)
+                        val html = HtmlGenerator(src, parsedTree, flavour).generateHtml()
+                        HtmlCompat.fromHtml(html, FROM_HTML_MODE_LEGACY)
+                    }
+                    else if (readmeState is ReadmeEmpty) resources.getString(R.string.no_readme)
+                    else null
+
+                with(binding.stateViewLayout) {
+                    // Error/ loading view
+                    stateView.visibility =
+                        if (readmeState is ReadmeLoaded || readmeState is ReadmeEmpty) View.GONE else View.VISIBLE
+
+                    statusImageView.setImageResource(getImageResource(readmeState))
+
+                    errorTextView.text = getErrorText(readmeState)
+                    hintTextView.text = getErrorHintText(readmeState)
+
+                    retryButton.visibility =
+                        if (readmeState is ReadmeError) View.VISIBLE else View.GONE
+                }
             }
         }
     }
@@ -129,6 +182,39 @@ class RepositorylInfoFragment : Fragment() {
     // State.Loaded, State.Loading -> null
     private fun getErrorHintText(state: State): String? = when (state) {
         is Error ->
+            when (state.error) {
+                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error_hint)
+                else -> resources.getString(R.string.something_error_hint)
+            }
+        else -> null
+    }
+
+
+    private fun getImageResource(state: ReadmeState): Int = when (state) {
+        is ReadmeLoading -> R.drawable.loading_animation
+        is ReadmeError ->
+            when (state.error) {
+                "java.net.UnknownHostException" -> R.drawable.connection_error
+                else -> R.drawable.something_error
+            }
+        else -> 0
+    }
+
+    // State.Error, State.Empty -> String
+    // State.Loaded, State.Loading -> null
+    private fun getErrorText(state: ReadmeState): String? = when (state) {
+        is ReadmeError ->
+            when (state.error) {
+                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error)
+                else -> resources.getString(R.string.something_error)
+            }
+        else -> null
+    }
+
+    // State.Error, State.Empty -> String
+    // State.Loaded, State.Loading -> null
+    private fun getErrorHintText(state: ReadmeState): String? = when (state) {
+        is ReadmeError ->
             when (state.error) {
                 "java.net.UnknownHostException" -> resources.getString(R.string.connection_error_hint)
                 else -> resources.getString(R.string.something_error_hint)

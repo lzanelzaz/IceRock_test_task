@@ -1,22 +1,19 @@
 package ru.lzanelzaz.icerock_test_task.auth
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.lzanelzaz.icerock_test_task.KeyValueStorage
-import ru.lzanelzaz.icerock_test_task.MainActivity
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
-import ru.lzanelzaz.icerock_test_task.repositories_list.RepositoriesListViewModel
-import javax.inject.Inject
 
 typealias State = AuthViewModel.State
 typealias Loading = AuthViewModel.State.Loading
@@ -54,7 +51,6 @@ class AuthFragment : Fragment() {
         binding.editToken.doOnTextChanged { text, _, _, _ ->
             binding.editToken.alpha = if (text.isNullOrEmpty()) 0.5F else 1F
         }
-
         binding.signInButton.setOnClickListener { view: View ->
             val viewModel = AuthViewModel()
             viewModel.token.value = binding.editToken.text.toString()
@@ -77,10 +73,29 @@ class AuthFragment : Fragment() {
 
                     invalidTokenError.visibility =
                         if (state is InvalidInput) View.VISIBLE else View.INVISIBLE
-                    invalidTokenError.text = resources.getString(R.string.invalid_token)
+                    invalidTokenError.text = if (state is InvalidInput) {
+                        if (state.reason == "java.net.UnknownHostException")
+                            resources.getString(R.string.connection_error)
+                        else
+                        resources.getString(R.string.invalid_token)
+                    }
+                    else null
                 }
+
+                if (state is InvalidInput && state.reason == "retrofit2.HttpException") {
+                    val builder = AlertDialog.Builder(context)
+                    builder.setTitle(resources.getString(R.string.error_dialog_title))
+                        .setMessage(resources.getString(R.string.error_dialog_message))
+                        .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
+                            dialog.cancel()
+                        }
+                    val dialog = builder.create()
+                    dialog.show()
+                }
+
                 if (state is Idle) {
-                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                    val sharedPref =
+                        activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
                     val editor = sharedPref?.edit()
                     editor?.putString("authToken", KeyValueStorage.authToken)
                     editor?.commit()

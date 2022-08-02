@@ -46,7 +46,7 @@ class RepositoriesListFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.log_out -> {
-                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                    val sharedPref = activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
                     val editor = sharedPref?.edit()
                     editor?.clear()
                     editor?.commit()

@@ -4,6 +4,10 @@
     <string name="sign_in_button">Sign in</string>
     <string name="invalid_token">Invalid token</string>
 
+    <string name="error_dialog_title">Error</string>
+    <string name="error_dialog_message">Error data / error code \n\ninformation for developers</string>
+    <string name="ok">OK</string>
+
     <string name="log_out">Log out</string>
 
     <string name="connection_error">Connection error</string>
@@ -22,4 +26,6 @@
     <string name="stars">stars</string>
     <string name="forks">forks</string>
     <string name="watchers">watchers</string>
+
+    <string name="no_readme">No README.md</string>
 </resources>

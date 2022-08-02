@@ -66,6 +66,9 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.43.1")
     kapt ("com.google.dagger:hilt-compiler:2.43.1")
 
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation ("org.jetbrains:markdown:0.2.1")
+
 }
 
 kapt {

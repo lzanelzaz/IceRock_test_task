@@ -38,8 +38,20 @@ class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
             try {
                 val repository: RepoDetails = AppRepository().getRepository(repoId)
                 state.value = State.Loaded(repository, ReadmeState.Loading)
-                //val readme = AppRepository().getRepositoryReadme("icerockdev", repository.name, repository.defaultBranch)
-                //val readmeState =
+                try {
+                    val readme : String = AppRepository().getRepositoryReadme(repository.owner.login, repository.name, repository.defaultBranch)
+                    state.value = State.Loaded(repository, ReadmeState.Loaded(readme))
+
+                } catch (exception: Exception) {
+                    val error = exception.toString()
+                    val errorType = error.slice(0 until error.indexOf(':'))
+                    // "retrofit2.HttpException" -> "no readme"
+                    state.value = State.Loaded(repository,
+                        if (errorType == "retrofit2.HttpException")
+                            ReadmeState.Empty
+                        else ReadmeState.Error(errorType)
+                    )
+                }
 
             } catch (exception: Exception) {
                 val error = exception.toString()
@@ -48,7 +60,7 @@ class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
                 // "java.net.UnknownHostException" -> "Connection error"
                 // else -> "Something error"
 
-                state.value = RepositoryInfoViewModel.State.Error(errorType)
+                state.value = State.Error(errorType)
             }
 
         }

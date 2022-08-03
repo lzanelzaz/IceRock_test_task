@@ -20,7 +20,6 @@ import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
 
-
 typealias State = RepositoryInfoViewModel.State
 typealias Loading = RepositoryInfoViewModel.State.Loading
 typealias Loaded = RepositoryInfoViewModel.State.Loaded
@@ -36,6 +35,7 @@ class RepositorylInfoFragment : Fragment() {
 
     lateinit var binding: FragmentRepositoryInfoBinding
     lateinit var repoId: String
+    lateinit var viewModel: RepositoryInfoViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,11 +47,9 @@ class RepositorylInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         repoId = requireArguments().getString(REPO_ID).let { requireNotNull(it) }
+
         bindToViewModel()
 
-        binding.stateViewLayout.retryButton.setOnClickListener {
-            bindToViewModel()
-        }
         binding.topAppBar.setNavigationOnClickListener {
             it.findNavController()
                 .navigate(R.id.action_repositorylInfoFragment_to_listRepositoriesFragment)
@@ -83,24 +81,24 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     private fun bindToViewModel() {
-
-        val viewModel = RepositoryInfoViewModel(repoId)
+        viewModel = RepositoryInfoViewModel(repoId)
 
         viewModel.getState().observe(viewLifecycleOwner) { state ->
+
+            binding.topAppBar.title = repoId
+            binding.topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
+                scrollFlags = if (state is Loaded && state.readmeState is ReadmeLoaded)
+                    SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
+                else SCROLL_FLAG_NO_SCROLL
+            }
+
+            binding.repositoryView.visibility =
+                if (state is Loaded) View.VISIBLE else View.INVISIBLE
+
+            val githubRepo: RepoDetails? =
+                if (state is Loaded) state.githubRepo else null
+
             with(binding) {
-                topAppBar.title = repoId
-
-                topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
-                    scrollFlags = if (state is Loaded && state.readmeState is ReadmeLoaded)
-                        SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
-                    else SCROLL_FLAG_NO_SCROLL
-                }
-
-                repositoryView.visibility =
-                    if (state is Loaded) View.VISIBLE else View.INVISIBLE
-                val githubRepo: RepoDetails? =
-                    if (state is Loaded) state.githubRepo else null
-
                 linkTextView.text = githubRepo?.link?.drop("https://".length)
                 licenseTextView.text = githubRepo?.license?.id
                 starsCount.text = githubRepo?.stars.toString()
@@ -109,7 +107,6 @@ class RepositorylInfoFragment : Fragment() {
             }
 
             with(binding.stateViewLayout) {
-
                 // Error/ loading view
                 stateView.visibility =
                     if (state is Loaded) View.GONE else View.VISIBLE
@@ -121,45 +118,52 @@ class RepositorylInfoFragment : Fragment() {
 
                 retryButton.visibility =
                     if (state is Loading) View.GONE else View.VISIBLE
+
+                retryButton.setOnClickListener { bindToViewModel() }
+            }
+            loadReadme(state)
+        }
+    }
+
+    private fun loadReadme(state: State) {
+        if (state is Loaded) {
+            val readmeState = state.readmeState
+            binding.readmeTextView.text = when (readmeState) {
+                is ReadmeLoaded -> {
+                    val markdown = readmeState.markdown
+                    // delete badges
+                    val src = markdown.drop(markdown.indexOf('#'))
+                    val flavour = CommonMarkFlavourDescriptor()
+                    val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(src)
+                    val html = HtmlGenerator(src, parsedTree, flavour).generateHtml()
+                    HtmlCompat.fromHtml(html, FROM_HTML_MODE_LEGACY)
+                }
+                is ReadmeEmpty -> resources.getString(R.string.no_readme)
+                else -> null
             }
 
-            if (state is Loaded) {
-                val readmeState = state.readmeState
+            with(binding.stateViewLayout) {
+                // Error/ loading view
+                stateView.visibility =
+                    if (readmeState is ReadmeLoaded || readmeState is ReadmeEmpty) View.GONE else View.VISIBLE
 
-                binding.readmeTextView.text =
-                    if (readmeState is ReadmeLoaded) {
-                        val markdown = readmeState.markdown
-                        // delete badges
-                        val src = markdown.drop(markdown.indexOf('#'))
+                statusImageView.setImageResource(getImageResource(readmeState))
 
-                        val flavour = CommonMarkFlavourDescriptor()
-                        val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(src)
-                        val html = HtmlGenerator(src, parsedTree, flavour).generateHtml()
-                        HtmlCompat.fromHtml(html, FROM_HTML_MODE_LEGACY)
-                    }
-                    else if (readmeState is ReadmeEmpty) resources.getString(R.string.no_readme)
-                    else null
+                errorTextView.text = getErrorText(readmeState)
+                hintTextView.text = getErrorHintText(readmeState)
 
-                with(binding.stateViewLayout) {
-                    // Error/ loading view
-                    stateView.visibility =
-                        if (readmeState is ReadmeLoaded || readmeState is ReadmeEmpty) View.GONE else View.VISIBLE
+                retryButton.visibility =
+                    if (readmeState is ReadmeError) View.VISIBLE else View.GONE
 
-                    statusImageView.setImageResource(getImageResource(readmeState))
-
-                    errorTextView.text = getErrorText(readmeState)
-                    hintTextView.text = getErrorHintText(readmeState)
-
-                    retryButton.visibility =
-                        if (readmeState is ReadmeError) View.VISIBLE else View.GONE
+                retryButton.setOnClickListener {
+                    viewModel.loadReadmeState(state.githubRepo)
                 }
             }
         }
     }
 
-
     // State.Error, State.Empty, State.Loading -> resId
-    // State.Loaded -> non
+// State.Loaded -> non
     private fun getImageResource(state: State): Int = when (state) {
         is Loading -> R.drawable.loading_animation
         is Error ->
@@ -171,7 +175,7 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
+// State.Loaded, State.Loading -> null
     private fun getErrorText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
@@ -182,7 +186,7 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
+// State.Loaded, State.Loading -> null
     private fun getErrorHintText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
@@ -204,7 +208,7 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
+// State.Loaded, State.Loading -> null
     private fun getErrorText(state: ReadmeState): String? = when (state) {
         is ReadmeError ->
             when (state.error) {
@@ -215,7 +219,7 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
+// State.Loaded, State.Loading -> null
     private fun getErrorHintText(state: ReadmeState): String? = when (state) {
         is ReadmeError ->
             when (state.error) {

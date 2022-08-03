@@ -25,13 +25,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include
-        android:id="@+id/state_view_layout"
-        layout="@layout/state_view"
-        android:visibility="gone"
-        tools:visibility="visible"
-        />
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/repository_view"
         android:layout_width="match_parent"
@@ -41,7 +34,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <ImageView
                 android:id="@+id/link_image_view"
                 android:layout_width="wrap_content"
@@ -227,10 +219,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/stars"
                 tools:text="No README.md" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/state_view_layout"
+        layout="@layout/state_view"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

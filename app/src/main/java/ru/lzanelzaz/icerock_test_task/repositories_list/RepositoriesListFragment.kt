@@ -39,14 +39,11 @@ class RepositoriesListFragment : Fragment() {
 
         bindToViewModel()
 
-        binding.stateViewLayout.retryButton.setOnClickListener {
-            bindToViewModel()
-        }
-
         binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.log_out -> {
-                    val sharedPref = activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
+                    val sharedPref =
+                        activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
                     val editor = sharedPref?.edit()
                     editor?.clear()
                     editor?.commit()
@@ -62,6 +59,7 @@ class RepositoriesListFragment : Fragment() {
     private fun bindToViewModel() {
         val viewModel = RepositoriesListViewModel()
         viewModel.getState().observe(viewLifecycleOwner) { state ->
+
             // Toolbar
             binding.topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
                 scrollFlags = if (state is Loaded)
@@ -86,6 +84,8 @@ class RepositoriesListFragment : Fragment() {
                 retryButton.visibility =
                     if (state is Loading) View.GONE else View.VISIBLE
                 retryButton.text = getRetryButtonText(state)
+
+                retryButton.setOnClickListener { bindToViewModel() }
             }
         }
     }
@@ -137,11 +137,12 @@ class RepositoriesListFragment : Fragment() {
         else -> null
     }
 
-    private fun getErrorTextColor(state: State): Int = resources.getColor(when (state) {
-        is Error -> R.color.error
-        is Empty -> R.color.secondary
-        else -> R.color.white
-    }
+    private fun getErrorTextColor(state: State): Int = resources.getColor(
+        when (state) {
+            is Error -> R.color.error
+            is Empty -> R.color.secondary
+            else -> R.color.white
+        }
     )
 
     private fun getRetryButtonText(state: State): String? = when (state) {

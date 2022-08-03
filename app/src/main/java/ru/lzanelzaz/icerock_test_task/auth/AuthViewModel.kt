@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
+import ru.lzanelzaz.icerock_test_task.R
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,13 +27,14 @@ class AuthViewModel @Inject constructor() : ViewModel() {
                 AppRepository().signIn(token.value!!)
                 state.value = State.Idle
             } catch (exception: Exception) {
-                val error = exception.toString()
-                val errorType = error.slice(0 until error.indexOf(':'))
+                val errorType = exception.toString()
 
-                // "retrofit2.HttpException" -> Error data / error code information for developers
-                //  "java.net.UnknownHostException" -> "Connection error"
-                // else -> Invalid token
-                state.value = State.InvalidInput(errorType)
+                val reason = when (errorType.slice(0 until errorType.indexOf(':'))) {
+                    "retrofit2.HttpException" -> "Error data"
+                    "java.net.UnknownHostException" -> "Connection error"
+                    else -> "Invalid token"
+                }
+                state.value = State.InvalidInput(reason)
             }
         }
     }

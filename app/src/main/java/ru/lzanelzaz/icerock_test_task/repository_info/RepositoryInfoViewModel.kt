@@ -1,6 +1,5 @@
 package ru.lzanelzaz.icerock_test_task.repository_info
 
-import androidx.constraintlayout.motion.widget.Debug.getState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,28 +38,33 @@ class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
                 val repository: RepoDetails = AppRepository().getRepository(repoId)
                 state.value = State.Loaded(repository, ReadmeState.Loading)
                 try {
-                    val readme : String = AppRepository().getRepositoryReadme(repository.owner.login, repository.name, repository.defaultBranch)
+                    val readme: String = AppRepository().getRepositoryReadme(
+                        repository.owner.login,
+                        repository.name,
+                        repository.defaultBranch
+                    )
                     state.value = State.Loaded(repository, ReadmeState.Loaded(readme))
 
                 } catch (exception: Exception) {
-                    val error = exception.toString()
-                    val errorType = error.slice(0 until error.indexOf(':'))
-                    // "retrofit2.HttpException" -> "no readme"
-                    state.value = State.Loaded(repository,
-                        if (errorType == "retrofit2.HttpException")
-                            ReadmeState.Empty
-                        else ReadmeState.Error(errorType)
-                    )
+                    val errorType = exception.toString()
+
+                    val readmeState = when (errorType.slice(0 until errorType.indexOf(':'))) {
+                        "retrofit2.HttpException" -> ReadmeState.Empty
+                        "java.net.ConnectException" -> ReadmeState.Error("Connection error")
+                        else -> ReadmeState.Error("Something error")
+                    }
+                    state.value = State.Loaded(repository, readmeState)
                 }
 
             } catch (exception: Exception) {
-                val error = exception.toString()
-                val errorType = error.slice(0 until error.indexOf(':'))
+                val errorType = exception.toString()
 
-                // "java.net.UnknownHostException" -> "Connection error"
-                // else -> "Something error"
+                val reason = when (errorType.slice(0 until errorType.indexOf(':'))) {
+                    "java.net.UnknownHostException" -> "Connection error"
+                    else -> "Something error"
+                }
 
-                state.value = State.Error(errorType)
+                state.value = State.Error(reason)
             }
 
         }

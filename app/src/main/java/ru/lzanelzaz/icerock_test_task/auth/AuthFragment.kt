@@ -74,7 +74,7 @@ class AuthFragment : Fragment() {
                     invalidTokenError.visibility =
                         if (state is InvalidInput) View.VISIBLE else View.INVISIBLE
                     invalidTokenError.text = if (state is InvalidInput) {
-                        if (state.reason == "java.net.UnknownHostException")
+                        if (state.reason == "Connection error")
                             resources.getString(R.string.connection_error)
                         else
                         resources.getString(R.string.invalid_token)
@@ -82,7 +82,7 @@ class AuthFragment : Fragment() {
                     else null
                 }
 
-                if (state is InvalidInput && state.reason == "retrofit2.HttpException") {
+                if (state is InvalidInput && state.reason == "Error data") {
                     val builder = AlertDialog.Builder(context)
                     builder.setTitle(resources.getString(R.string.error_dialog_title))
                         .setMessage(resources.getString(R.string.error_dialog_message))

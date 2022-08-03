@@ -28,7 +28,9 @@
     <include
         android:id="@+id/state_view_layout"
         layout="@layout/state_view"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/repository_view"

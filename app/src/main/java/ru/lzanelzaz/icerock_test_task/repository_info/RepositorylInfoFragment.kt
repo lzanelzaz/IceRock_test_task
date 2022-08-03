@@ -35,6 +35,7 @@ typealias ReadmeEmpty = RepositoryInfoViewModel.ReadmeState.Empty
 class RepositorylInfoFragment : Fragment() {
 
     lateinit var binding: FragmentRepositoryInfoBinding
+    lateinit var repoId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +46,7 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        repoId = requireArguments().getString(REPO_ID).let { requireNotNull(it) }
         bindToViewModel()
 
         binding.stateViewLayout.retryButton.setOnClickListener {
@@ -81,7 +83,7 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     private fun bindToViewModel() {
-        val repoId = requireArguments().getString(REPO_ID).let { requireNotNull(it) }
+
         val viewModel = RepositoryInfoViewModel(repoId)
 
         viewModel.getState().observe(viewLifecycleOwner) { state ->
@@ -107,6 +109,7 @@ class RepositorylInfoFragment : Fragment() {
             }
 
             with(binding.stateViewLayout) {
+
                 // Error/ loading view
                 stateView.visibility =
                     if (state is Loaded) View.GONE else View.VISIBLE
@@ -161,7 +164,7 @@ class RepositorylInfoFragment : Fragment() {
         is Loading -> R.drawable.loading_animation
         is Error ->
             when (state.error) {
-                "java.net.UnknownHostException" -> R.drawable.connection_error
+                "Connection error" -> R.drawable.connection_error
                 else -> R.drawable.something_error
             }
         else -> 0
@@ -172,7 +175,7 @@ class RepositorylInfoFragment : Fragment() {
     private fun getErrorText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
-                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error)
+                "Connection error" -> resources.getString(R.string.connection_error)
                 else -> resources.getString(R.string.something_error)
             }
         else -> null
@@ -183,7 +186,7 @@ class RepositorylInfoFragment : Fragment() {
     private fun getErrorHintText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
-                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error_hint)
+                "Connection error" -> resources.getString(R.string.connection_error_hint)
                 else -> resources.getString(R.string.something_error_hint)
             }
         else -> null
@@ -194,7 +197,7 @@ class RepositorylInfoFragment : Fragment() {
         is ReadmeLoading -> R.drawable.loading_animation
         is ReadmeError ->
             when (state.error) {
-                "java.net.UnknownHostException" -> R.drawable.connection_error
+                "Connection error" -> R.drawable.connection_error
                 else -> R.drawable.something_error
             }
         else -> 0
@@ -205,7 +208,7 @@ class RepositorylInfoFragment : Fragment() {
     private fun getErrorText(state: ReadmeState): String? = when (state) {
         is ReadmeError ->
             when (state.error) {
-                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error)
+                "Connection error" -> resources.getString(R.string.connection_error)
                 else -> resources.getString(R.string.something_error)
             }
         else -> null
@@ -216,7 +219,7 @@ class RepositorylInfoFragment : Fragment() {
     private fun getErrorHintText(state: ReadmeState): String? = when (state) {
         is ReadmeError ->
             when (state.error) {
-                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error_hint)
+                "Connection error" -> resources.getString(R.string.connection_error_hint)
                 else -> resources.getString(R.string.something_error_hint)
             }
         else -> null

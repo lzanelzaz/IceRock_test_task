@@ -33,13 +33,13 @@ class RepositoriesListViewModel : ViewModel() {
                     state.value = State.Loaded(repositories)
 
             } catch (exception: Exception) {
-                val error = exception.toString()
-                val errorType = error.slice(0 until error.indexOf(':'))
+                val errorType = exception.toString()
 
-                // "java.net.UnknownHostException" -> "Connection error"
-                // else -> "Something error"
-
-                state.value = State.Error(errorType)
+                val reason = when(errorType.slice(0 until errorType.indexOf(':'))) {
+                    "java.net.UnknownHostException" -> "Connection error"
+                    else -> "Something error"
+                }
+                state.value = State.Error(reason)
             }
         }
     }

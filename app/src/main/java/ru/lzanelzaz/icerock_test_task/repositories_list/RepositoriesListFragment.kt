@@ -106,7 +106,7 @@ class RepositoriesListFragment : Fragment() {
         is Loading -> R.drawable.loading_animation
         is Error ->
             when (state.error) {
-                "java.net.UnknownHostException" -> R.drawable.connection_error
+                "Connection error" -> R.drawable.connection_error
                 else -> R.drawable.something_error
             }
         is Empty -> R.drawable.empty_error
@@ -118,7 +118,7 @@ class RepositoriesListFragment : Fragment() {
     private fun getErrorText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
-                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error)
+                "Connection error" -> resources.getString(R.string.connection_error)
                 else -> resources.getString(R.string.something_error)
             }
         is Empty -> resources.getString(R.string.empty_error)
@@ -130,7 +130,7 @@ class RepositoriesListFragment : Fragment() {
     private fun getErrorHintText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
-                "java.net.UnknownHostException" -> resources.getString(R.string.connection_error_hint)
+                "Connection error" -> resources.getString(R.string.connection_error_hint)
                 else -> resources.getString(R.string.something_error_hint)
             }
         is Empty -> resources.getString(R.string.empty_error_hint)

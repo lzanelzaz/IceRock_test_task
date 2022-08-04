@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:text="@string/invalid_token"
+        android:text="@string/invalid_input"
         android:textColor="@color/error"
         android:textSize="12sp"
         android:visibility="invisible"

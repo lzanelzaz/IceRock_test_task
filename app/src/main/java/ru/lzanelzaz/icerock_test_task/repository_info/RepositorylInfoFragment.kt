@@ -146,6 +146,7 @@ class RepositorylInfoFragment : Fragment() {
                 // Error/ loading view
                 stateView.visibility =
                     if (readmeState is ReadmeLoaded || readmeState is ReadmeEmpty) View.GONE else View.VISIBLE
+                statusImageView.visibility = if (readmeState is ReadmeError) View.VISIBLE else View.GONE
 
                 statusImageView.setImageResource(getImageResource(readmeState))
 
@@ -159,6 +160,7 @@ class RepositorylInfoFragment : Fragment() {
                     viewModel.loadReadmeState(state.githubRepo)
                 }
             }
+            binding.loadingImageView.visibility = if (readmeState is ReadmeLoading) View.VISIBLE else View.GONE
         }
     }
 
@@ -198,7 +200,6 @@ class RepositorylInfoFragment : Fragment() {
 
 
     private fun getImageResource(state: ReadmeState): Int = when (state) {
-        is ReadmeLoading -> R.drawable.loading_animation
         is ReadmeError ->
             when (state.error) {
                 "Connection error" -> R.drawable.connection_error

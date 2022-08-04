@@ -2,7 +2,7 @@
     <string name="app_name">Repositories</string>
     <string name="personal_access_token">Personal access token</string>
     <string name="sign_in_button">Sign in</string>
-    <string name="invalid_token">Invalid token</string>
+    <string name="invalid_input">Invalid input</string>
 
     <string name="error_dialog_title">Error</string>
     <string name="error_dialog_message">Error data / error code \n\ninformation for developers</string>

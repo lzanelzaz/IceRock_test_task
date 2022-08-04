@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
@@ -52,15 +54,20 @@ class AuthFragment : Fragment() {
             binding.editToken.alpha = if (text.isNullOrEmpty()) 0.5F else 1F
         }
         binding.signInButton.setOnClickListener { view: View ->
-            val viewModel = AuthViewModel()
-            viewModel.token.value = binding.editToken.text.toString()
+
+            val viewModel = AuthViewModel(binding.editToken.text.toString())
             viewModel.onSignButtonPressed()
+
+            lifecycleScope.launch {
+                viewModel.actions.collect { handleAction(it) }
+            }
+
             viewModel.state.observe(viewLifecycleOwner) { state ->
                 with(binding) {
                     loadingImageView.visibility =
-                        if (state is InvalidInput) View.GONE else View.VISIBLE
+                        if (state is Loading) View.VISIBLE else View.GONE
                     signInButton.text =
-                        if (state is InvalidInput) resources.getString(R.string.sign_in_button) else null
+                        if (state is Loading) null else resources.getString(R.string.sign_in_button)
 
                     personalAccessTokenHint.visibility = View.VISIBLE
                     personalAccessTokenHint.setTextColor(getPersonalAccessTokenHintColor(state))
@@ -73,37 +80,7 @@ class AuthFragment : Fragment() {
 
                     invalidTokenError.visibility =
                         if (state is InvalidInput) View.VISIBLE else View.INVISIBLE
-                    invalidTokenError.text = if (state is InvalidInput) {
-                        if (state.reason == "Connection error")
-                            resources.getString(R.string.connection_error)
-                        else
-                        resources.getString(R.string.invalid_token)
-                    }
-                    else null
                 }
-
-                if (state is InvalidInput && state.reason == "Error data") {
-                    val builder = AlertDialog.Builder(context)
-                    builder.setTitle(resources.getString(R.string.error_dialog_title))
-                        .setMessage(resources.getString(R.string.error_dialog_message))
-                        .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
-                            dialog.cancel()
-                        }
-                    val dialog = builder.create()
-                    dialog.show()
-                }
-
-                if (state is Idle) {
-                    val sharedPref =
-                        activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
-                    val editor = sharedPref?.edit()
-                    editor?.putString("authToken", KeyValueStorage.authToken)
-                    editor?.commit()
-
-                    view.findNavController()
-                        .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
-                }
-
             }
         }
     }
@@ -111,8 +88,38 @@ class AuthFragment : Fragment() {
     private fun getPersonalAccessTokenHintColor(state: State) = resources.getColor(
         when (state) {
             is InvalidInput -> R.color.error
-            is Loading -> R.color.white
-            else -> R.color.secondary
+            is Loading -> R.color.secondary
+            else -> R.color.white
         }
     )
+
+    private fun handleAction(action: AuthViewModel.Action) {
+        when (action) {
+            is AuthViewModel.Action.ShowError -> {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle(
+                    if (action.message == "Error data") resources.getString(R.string.error_dialog_title)
+                    else resources.getString(R.string.connection_error)
+                )
+                    .setMessage(
+                        if (action.message == "Error data") resources.getString(R.string.error_dialog_message)
+                        else resources.getString(R.string.connection_error_hint)
+                    )
+                    .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                val dialog = builder.create()
+                dialog.show()
+            }
+            is AuthViewModel.Action.RouteToMain -> {
+                val sharedPref =
+                    activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
+                val editor = sharedPref?.edit()
+                editor?.putString("authToken", KeyValueStorage.authToken)
+                editor?.commit()
+                view?.findNavController()
+                    ?.navigate(R.id.action_authFragment_to_listRepositoriesFragment)
+            }
+        }
+    }
 }

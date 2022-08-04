@@ -12,10 +12,10 @@ import ru.lzanelzaz.icerock_test_task.AppRepository
 import ru.lzanelzaz.icerock_test_task.R
 import javax.inject.Inject
 
-@HiltViewModel
-class AuthViewModel @Inject constructor() : ViewModel() {
+
+class AuthViewModel(user_token: String) : ViewModel() {
     //    @Inject
-    val token = MutableLiveData<String>()
+    val token = MutableLiveData<String>(user_token)
     var state = MutableLiveData<State>(State.Loading)
 
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
@@ -25,16 +25,21 @@ class AuthViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             try {
                 AppRepository().signIn(token.value!!)
-                state.value = State.Idle
+                _actions.send(Action.RouteToMain)
             } catch (exception: Exception) {
                 val errorType = exception.toString()
-
                 val reason = when (errorType.slice(0 until errorType.indexOf(':'))) {
                     "retrofit2.HttpException" -> "Error data"
                     "java.net.UnknownHostException" -> "Connection error"
                     else -> "Invalid token"
                 }
-                state.value = State.InvalidInput(reason)
+                state.value = when (reason) {
+                    "Invalid token" -> State.InvalidInput(reason)
+                    else -> {
+                        _actions.send(Action.ShowError(reason))
+                        State.Idle
+                    }
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
-import ru.lzanelzaz.icerock_test_task.RepoDetails
+import ru.lzanelzaz.icerock_test_task.models.RepoDetails
 
 class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
     private val state: MutableLiveData<State> by lazy {

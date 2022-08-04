@@ -1,4 +1,4 @@
-package ru.lzanelzaz.icerock_test_task
+package ru.lzanelzaz.icerock_test_task.models
 
 import kotlinx.serialization.Serializable
 

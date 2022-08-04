@@ -17,7 +17,7 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 import ru.lzanelzaz.icerock_test_task.R
-import ru.lzanelzaz.icerock_test_task.RepoDetails
+import ru.lzanelzaz.icerock_test_task.models.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
 
 typealias State = RepositoryInfoViewModel.State

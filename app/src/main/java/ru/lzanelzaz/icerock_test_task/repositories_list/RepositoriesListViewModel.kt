@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
-import ru.lzanelzaz.icerock_test_task.Repo
+import ru.lzanelzaz.icerock_test_task.models.Repo
 
 class RepositoriesListViewModel : ViewModel() {
 

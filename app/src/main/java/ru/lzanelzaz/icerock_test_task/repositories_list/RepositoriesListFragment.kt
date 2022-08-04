@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
@@ -25,6 +26,7 @@ typealias Empty = RepositoriesListViewModel.State.Empty
 class RepositoriesListFragment : Fragment() {
 
     lateinit var binding: FragmentListRepositoriesBinding
+    private val viewModel : RepositoriesListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,29 +40,26 @@ class RepositoriesListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bindToViewModel()
-
-        binding.topAppBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.log_out -> {
-                    val sharedPref =
-                        activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
-                    val editor = sharedPref?.edit()
-                    editor?.clear()
-                    editor?.commit()
-                    view.findNavController()
-                        .navigate(R.id.action_listRepositoriesFragment_to_authFragment)
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     private fun bindToViewModel() {
-        val viewModel = RepositoriesListViewModel()
         viewModel.getState().observe(viewLifecycleOwner) { state ->
-
             // Toolbar
+             binding.topAppBar.setOnMenuItemClickListener {
+                        when (it.itemId) {
+                            R.id.log_out -> {
+                                val sharedPref =
+                                    activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
+                                val editor = sharedPref?.edit()
+                                editor?.clear()
+                                editor?.commit()
+                                view?.findNavController()
+                                    ?.navigate(R.id.action_listRepositoriesFragment_to_authFragment)
+                                true
+                            }
+                            else -> false
+                        }
+                    }
             binding.topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
                 scrollFlags = if (state is Loaded)
                     SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
@@ -85,7 +84,7 @@ class RepositoriesListFragment : Fragment() {
                     if (state is Loading) View.GONE else View.VISIBLE
                 retryButton.text = getRetryButtonText(state)
 
-                retryButton.setOnClickListener { bindToViewModel() }
+                retryButton.setOnClickListener { viewModel.updateState() }
             }
         }
     }

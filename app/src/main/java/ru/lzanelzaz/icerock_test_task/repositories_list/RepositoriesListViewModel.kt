@@ -4,15 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
-import ru.lzanelzaz.icerock_test_task.models.Repo
+import ru.lzanelzaz.icerock_test_task.model.Repo
+import javax.inject.Inject
 
-class RepositoriesListViewModel : ViewModel() {
+@HiltViewModel
+class RepositoriesListViewModel @Inject constructor(): ViewModel() {
 
-    private val state: MutableLiveData<State> by lazy {
-        MutableLiveData<State>(State.Loading).also { loadState() }
-    }
+    private val state = MutableLiveData<State>()
 
     sealed interface State {
         object Loading : State
@@ -23,7 +24,16 @@ class RepositoriesListViewModel : ViewModel() {
 
     fun getState() : LiveData<State> = state
 
+    fun updateState() {
+        loadState()
+    }
+
+    init {
+        loadState()
+    }
+
     private fun loadState() {
+        state.value = State.Loading
         viewModelScope.launch {
             try {
                 val repositories = AppRepository().getRepositories()

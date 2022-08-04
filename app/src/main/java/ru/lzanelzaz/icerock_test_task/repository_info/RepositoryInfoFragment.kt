@@ -17,7 +17,7 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 import ru.lzanelzaz.icerock_test_task.R
-import ru.lzanelzaz.icerock_test_task.models.RepoDetails
+import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
 
 typealias State = RepositoryInfoViewModel.State
@@ -31,7 +31,7 @@ typealias ReadmeLoaded = RepositoryInfoViewModel.ReadmeState.Loaded
 typealias ReadmeError = RepositoryInfoViewModel.ReadmeState.Error
 typealias ReadmeEmpty = RepositoryInfoViewModel.ReadmeState.Empty
 
-class RepositorylInfoFragment : Fragment() {
+class RepositoryInfoFragment : Fragment() {
 
     lateinit var binding: FragmentRepositoryInfoBinding
     lateinit var repoId: String
@@ -46,30 +46,9 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        repoId = requireArguments().getString(REPO_ID).let { requireNotNull(it) }
-
+        repoId = requireNotNull(requireArguments().getString(REPO_ID))
+        viewModel = RepositoryInfoViewModel(repoId)
         bindToViewModel()
-
-        binding.topAppBar.setNavigationOnClickListener {
-            it.findNavController()
-                .navigate(R.id.action_repositorylInfoFragment_to_listRepositoriesFragment)
-        }
-
-        binding.topAppBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.log_out -> {
-                    val sharedPref =
-                        activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
-                    val editor = sharedPref?.edit()
-                    editor?.clear()
-                    editor?.commit()
-                    view.findNavController()
-                        .navigate(R.id.action_repositorylInfoFragment_to_authFragment)
-                    true
-                }
-                else -> false
-            }
-        }
     }
 
     companion object {
@@ -81,15 +60,37 @@ class RepositorylInfoFragment : Fragment() {
     }
 
     private fun bindToViewModel() {
-        viewModel = RepositoryInfoViewModel(repoId)
-
         viewModel.getState().observe(viewLifecycleOwner) { state ->
+            with(binding.topAppBar) {
+                title = repoId
+                updateLayoutParams<AppBarLayout.LayoutParams> {
+                    scrollFlags = if (state is Loaded && state.readmeState is ReadmeLoaded)
+                        SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
+                    else SCROLL_FLAG_NO_SCROLL
+                }
+                setNavigationOnClickListener {
+                    it.findNavController()
+                        .navigate(R.id.action_repositorylInfoFragment_to_listRepositoriesFragment)
+                }
 
-            binding.topAppBar.title = repoId
-            binding.topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
-                scrollFlags = if (state is Loaded && state.readmeState is ReadmeLoaded)
-                    SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
-                else SCROLL_FLAG_NO_SCROLL
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.log_out -> {
+                            val sharedPref =
+                                activity?.getSharedPreferences(
+                                    "USER_API_TOKEN",
+                                    Context.MODE_PRIVATE
+                                )
+                            val editor = sharedPref?.edit()
+                            editor?.clear()
+                            editor?.commit()
+                            view?.findNavController()
+                                ?.navigate(R.id.action_repositorylInfoFragment_to_authFragment)
+                            true
+                        }
+                        else -> false
+                    }
+                }
             }
 
             binding.repositoryView.visibility =
@@ -119,8 +120,9 @@ class RepositorylInfoFragment : Fragment() {
                 retryButton.visibility =
                     if (state is Loading) View.GONE else View.VISIBLE
 
-                retryButton.setOnClickListener { bindToViewModel() }
+                retryButton.setOnClickListener { viewModel.updateState() }
             }
+
             loadReadme(state)
         }
     }
@@ -146,7 +148,8 @@ class RepositorylInfoFragment : Fragment() {
                 // Error/ loading view
                 stateView.visibility =
                     if (readmeState is ReadmeLoaded || readmeState is ReadmeEmpty) View.GONE else View.VISIBLE
-                statusImageView.visibility = if (readmeState is ReadmeError) View.VISIBLE else View.GONE
+                statusImageView.visibility =
+                    if (readmeState is ReadmeError) View.VISIBLE else View.GONE
 
                 statusImageView.setImageResource(getImageResource(readmeState))
 
@@ -160,7 +163,8 @@ class RepositorylInfoFragment : Fragment() {
                     viewModel.loadReadmeState(state.githubRepo)
                 }
             }
-            binding.loadingImageView.visibility = if (readmeState is ReadmeLoading) View.VISIBLE else View.GONE
+            binding.loadingImageView.visibility =
+                if (readmeState is ReadmeLoading) View.VISIBLE else View.GONE
         }
     }
 

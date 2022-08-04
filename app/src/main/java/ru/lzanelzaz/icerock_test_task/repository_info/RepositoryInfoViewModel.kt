@@ -6,12 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
-import ru.lzanelzaz.icerock_test_task.models.RepoDetails
+import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 
-class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
-    private val state: MutableLiveData<State> by lazy {
-        MutableLiveData<State>(State.Loading).also { loadState() }
-    }
+class RepositoryInfoViewModel (private val repoId: String) : ViewModel() {
+    private val state = MutableLiveData<State>()
 
     sealed interface State {
         object Loading : State
@@ -32,7 +30,16 @@ class RepositoryInfoViewModel(private val repoId: String) : ViewModel() {
 
     fun getState(): LiveData<State> = state
 
+    fun updateState() {
+        loadState()
+    }
+
+    init {
+        loadState()
+    }
+
     private fun loadState() {
+        state.value = State.Loading
         viewModelScope.launch {
             try {
                 val repository: RepoDetails = AppRepository().getRepository(repoId)

@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONObject
 import ru.lzanelzaz.icerock_test_task.R
-import ru.lzanelzaz.icerock_test_task.models.Repo
+import ru.lzanelzaz.icerock_test_task.model.Repo
 import ru.lzanelzaz.icerock_test_task.databinding.RepoItemBinding
-import ru.lzanelzaz.icerock_test_task.repository_info.RepositorylInfoFragment
+import ru.lzanelzaz.icerock_test_task.repository_info.RepositoryInfoFragment
 
 class ReposListAdapter :
     ListAdapter<Repo, ReposListAdapter.ItemViewHolder>(DiffCallback()) {
@@ -30,7 +30,7 @@ class ReposListAdapter :
             view.findNavController()
                 .navigate(
                     R.id.action_listRepositoriesFragment_to_repositorylInfoFragment,
-                    RepositorylInfoFragment.createArguments(repoId = item.name)
+                    RepositoryInfoFragment.createArguments(repoId = item.name)
                 )
         }
     }

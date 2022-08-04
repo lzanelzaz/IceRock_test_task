@@ -12,14 +12,14 @@ import ru.lzanelzaz.icerock_test_task.AppRepository
 import ru.lzanelzaz.icerock_test_task.R
 import javax.inject.Inject
 
-
-class AuthViewModel(user_token: String) : ViewModel() {
-    //    @Inject
-    val token = MutableLiveData<String>(user_token)
+@HiltViewModel
+class AuthViewModel @Inject constructor(): ViewModel() {
+    private val token = MutableLiveData<String>()
     var state = MutableLiveData<State>(State.Loading)
 
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
     val actions: Flow<Action> = _actions.receiveAsFlow()
+
 
     fun onSignButtonPressed() {
         viewModelScope.launch {
@@ -42,6 +42,10 @@ class AuthViewModel(user_token: String) : ViewModel() {
                 }
             }
         }
+    }
+
+    fun setToken(userToken: String) {
+        token.value = userToken
     }
 
     sealed interface State {

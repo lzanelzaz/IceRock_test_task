@@ -8,11 +8,12 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
-import ru.lzanelzaz.icerock_test_task.models.Repo
-import ru.lzanelzaz.icerock_test_task.models.RepoDetails
-import ru.lzanelzaz.icerock_test_task.models.UserInfo
+import ru.lzanelzaz.icerock_test_task.model.Repo
+import ru.lzanelzaz.icerock_test_task.model.RepoDetails
+import ru.lzanelzaz.icerock_test_task.model.UserInfo
+import javax.inject.Inject
 
-class AppRepository {
+class AppRepository @Inject constructor() {
     suspend fun getRepositories(): List<Repo> {
         return GithubApi.retrofitService.getRepositories("token ${KeyValueStorage.authToken}")
     }

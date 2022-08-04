@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/repositorylInfoFragment"
-        android:name="ru.lzanelzaz.icerock_test_task.repository_info.RepositorylInfoFragment"
+        android:name="ru.lzanelzaz.icerock_test_task.repository_info.RepositoryInfoFragment"
         android:label="RepositorylInfoFragment"
         tools:layout="@layout/fragment_repository_info" >
         <action

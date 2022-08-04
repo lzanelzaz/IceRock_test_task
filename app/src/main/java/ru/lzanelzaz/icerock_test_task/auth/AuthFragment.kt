@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,12 +21,12 @@ import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
 typealias State = AuthViewModel.State
 typealias Loading = AuthViewModel.State.Loading
 typealias InvalidInput = AuthViewModel.State.InvalidInput
-typealias Idle = AuthViewModel.State.Idle
 
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
 
-    lateinit var binding: FragmentAuthBinding
+    private lateinit var binding: FragmentAuthBinding
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,9 +54,8 @@ class AuthFragment : Fragment() {
         binding.editToken.doOnTextChanged { text, _, _, _ ->
             binding.editToken.alpha = if (text.isNullOrEmpty()) 0.5F else 1F
         }
-        binding.signInButton.setOnClickListener { view: View ->
-
-            val viewModel = AuthViewModel(binding.editToken.text.toString())
+        binding.signInButton.setOnClickListener {
+            viewModel.setToken(binding.editToken.text.toString())
             viewModel.onSignButtonPressed()
 
             lifecycleScope.launch {

@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentListRepositoriesBinding
+import javax.inject.Inject
 
 typealias State = RepositoriesListViewModel.State
 typealias Loading = RepositoriesListViewModel.State.Loading
@@ -50,11 +51,7 @@ class RepositoriesListFragment : Fragment() {
             binding.topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.log_out -> {
-                        val sharedPref =
-                            activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
-                        val editor = sharedPref?.edit()
-                        editor?.clear()
-                        editor?.commit()
+                        viewModel.logOut()
                         findNavController()
                             .navigate(R.id.action_listRepositoriesFragment_to_authFragment)
                         true

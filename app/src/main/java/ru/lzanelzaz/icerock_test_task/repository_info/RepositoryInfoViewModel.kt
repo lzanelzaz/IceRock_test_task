@@ -17,6 +17,8 @@ import javax.inject.Named
 class RepositoryInfoViewModel @Inject constructor(private val repository: AppRepository) :
     ViewModel() {
     private val state = MutableLiveData<State>()
+    @Inject
+    lateinit var keyValueStorage: KeyValueStorage
 
     sealed interface State {
         object Loading : State
@@ -35,6 +37,10 @@ class RepositoryInfoViewModel @Inject constructor(private val repository: AppRep
         object Empty : ReadmeState
         data class Error(val error: String) : ReadmeState
         data class Loaded(val markdown: String) : ReadmeState
+    }
+
+    fun logOut() {
+        keyValueStorage.logOut()
     }
 
     fun getState(): LiveData<State> = state

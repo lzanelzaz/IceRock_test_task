@@ -1,5 +1,25 @@
 package ru.lzanelzaz.icerock_test_task
 
-object KeyValueStorage {
-    var authToken: String? = null
+import android.content.Context
+import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class KeyValueStorage @Inject constructor(@ApplicationContext context: Context) {
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
+
+    var authToken: String? = prefs.getString("authToken", null)
+    set(value) {
+        field = value
+        prefs.edit().putString("authToken", value).commit()
+    }
+
+    fun logOut() {
+        prefs.edit().clear().commit()
+        authToken = null
+    }
+
 }

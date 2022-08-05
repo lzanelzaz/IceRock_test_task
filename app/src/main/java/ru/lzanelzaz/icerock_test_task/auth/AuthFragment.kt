@@ -29,6 +29,9 @@ class AuthFragment : Fragment() {
 
     private lateinit var binding: FragmentAuthBinding
     private val viewModel: AuthViewModel by viewModels()
+    private var token: String = ""
+    @Inject lateinit var keyValueStorage: KeyValueStorage
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,14 +42,12 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sharedPref = activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
-        if (sharedPref?.getString("authToken", null) != null) {
-            KeyValueStorage.authToken = sharedPref.getString("authToken", null)
-            findNavController()
-                .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
-        }
+        token = keyValueStorage.authToken ?: ""
+        if (token != "") {
+            findNavController().navigate(R.id.action_authFragment_to_listRepositoriesFragment)
+        } else
+            bindToViewModel()
 
-        bindToViewModel()
     }
 
     private fun bindToViewModel() {
@@ -55,7 +56,8 @@ class AuthFragment : Fragment() {
             binding.editToken.alpha = if (text.isNullOrEmpty()) 0.5F else 1F
         }
         binding.signInButton.setOnClickListener {
-            viewModel.setToken(binding.editToken.text.toString())
+            token = binding.editToken.text.toString()
+            viewModel.setToken(token)
             viewModel.onSignButtonPressed()
 
             lifecycleScope.launch {
@@ -112,11 +114,7 @@ class AuthFragment : Fragment() {
                 dialog.show()
             }
             is AuthViewModel.Action.RouteToMain -> {
-                val sharedPref =
-                    activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
-                val editor = sharedPref?.edit()
-                editor?.putString("authToken", KeyValueStorage.authToken)
-                editor?.commit()
+                keyValueStorage.authToken = token
                 findNavController()
                     .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
             }

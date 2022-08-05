@@ -13,15 +13,16 @@ import javax.inject.Singleton
 @Singleton
 class AppRepository @Inject constructor(
     private val githubApiService: GithubApiService,
-    private val githubRawUserContentService: GithubRawUserContentService
+    private val githubRawUserContentService: GithubRawUserContentService,
+    private val keyValueStorage: KeyValueStorage
 ) {
 
     suspend fun getRepositories(): List<Repo> {
-        return githubApiService.getRepositories("token ${KeyValueStorage.authToken}")
+        return githubApiService.getRepositories("token ${keyValueStorage.authToken}")
     }
 
     suspend fun getRepository(repoId: String): RepoDetails {
-        return githubApiService.getRepository("token ${KeyValueStorage.authToken}", repoId)
+        return githubApiService.getRepository("token ${keyValueStorage.authToken}", repoId)
     }
 
     suspend fun getRepositoryReadme(
@@ -37,8 +38,8 @@ class AppRepository @Inject constructor(
     }
 
     suspend fun signIn(token: String): UserInfo {
-        KeyValueStorage.authToken = token
-        return githubApiService.signIn("token ${KeyValueStorage.authToken}")
+        keyValueStorage.authToken = token
+        return githubApiService.signIn("token ${keyValueStorage.authToken}")
     }
 
 }

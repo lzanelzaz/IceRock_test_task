@@ -1,6 +1,5 @@
 package ru.lzanelzaz.icerock_test_task.repository_info
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,9 +17,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
+import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
+import javax.inject.Inject
 
 typealias State = RepositoryInfoViewModel.State
 typealias Loading = RepositoryInfoViewModel.State.Loading
@@ -39,6 +40,7 @@ class RepositoryInfoFragment : Fragment() {
     lateinit var binding: FragmentRepositoryInfoBinding
     lateinit var repoId: String
     private val viewModel: RepositoryInfoViewModel by viewModels()
+    @Inject lateinit var keyValueStorage: KeyValueStorage
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,14 +82,7 @@ class RepositoryInfoFragment : Fragment() {
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.log_out -> {
-                            val sharedPref =
-                                activity?.getSharedPreferences(
-                                    "USER_API_TOKEN",
-                                    Context.MODE_PRIVATE
-                                )
-                            val editor = sharedPref?.edit()
-                            editor?.clear()
-                            editor?.commit()
+                            viewModel.logOut()
                             findNavController()
                                 .navigate(R.id.action_repositorylInfoFragment_to_authFragment)
                             true

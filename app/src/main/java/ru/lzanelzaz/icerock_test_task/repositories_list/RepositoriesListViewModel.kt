@@ -1,9 +1,6 @@
 package ru.lzanelzaz.icerock_test_task.repositories_list
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
@@ -13,8 +10,10 @@ import ru.lzanelzaz.icerock_test_task.model.Repo
 import javax.inject.Inject
 
 @HiltViewModel
-class RepositoriesListViewModel @Inject constructor(private val repository: AppRepository): ViewModel() {
-
+class RepositoriesListViewModel @Inject constructor(private val repository: AppRepository) :
+    ViewModel() {
+    @Inject
+    lateinit var keyValueStorage: KeyValueStorage
     private val state = MutableLiveData<State>()
 
     sealed interface State {
@@ -24,10 +23,14 @@ class RepositoriesListViewModel @Inject constructor(private val repository: AppR
         object Empty : State
     }
 
-    fun getState() : LiveData<State> = state
+    fun getState(): LiveData<State> = state
 
     fun onRetryButtonPressed() {
         loadState()
+    }
+
+    fun logOut() {
+        keyValueStorage.logOut()
     }
 
     init {
@@ -47,7 +50,7 @@ class RepositoriesListViewModel @Inject constructor(private val repository: AppR
             } catch (exception: Exception) {
                 val errorType = exception.toString()
 
-                val reason = when(errorType.slice(0 until errorType.indexOf(':'))) {
+                val reason = when (errorType.slice(0 until errorType.indexOf(':'))) {
                     "java.net.UnknownHostException" -> "Connection error"
                     else -> "Something error"
                 }

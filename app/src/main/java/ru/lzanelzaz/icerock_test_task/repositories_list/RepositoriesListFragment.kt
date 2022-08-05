@@ -84,7 +84,7 @@ class RepositoriesListFragment : Fragment() {
                     if (state is Loading) View.GONE else View.VISIBLE
                 retryButton.text = getRetryButtonText(state)
 
-                retryButton.setOnClickListener { viewModel.updateState() }
+                retryButton.setOnClickListener { viewModel.onRetryButtonPressed() }
             }
         }
     }

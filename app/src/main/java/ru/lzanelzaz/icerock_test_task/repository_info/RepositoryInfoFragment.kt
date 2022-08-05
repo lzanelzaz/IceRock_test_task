@@ -120,7 +120,7 @@ class RepositoryInfoFragment : Fragment() {
                 retryButton.visibility =
                     if (state is Loading) View.GONE else View.VISIBLE
 
-                retryButton.setOnClickListener { viewModel.updateState() }
+                retryButton.setOnClickListener { viewModel.onRetryButtonPressed() }
             }
 
             loadReadme(state)

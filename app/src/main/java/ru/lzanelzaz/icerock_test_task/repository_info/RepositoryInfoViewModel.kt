@@ -30,7 +30,7 @@ class RepositoryInfoViewModel (private val repoId: String) : ViewModel() {
 
     fun getState(): LiveData<State> = state
 
-    fun updateState() {
+    fun onRetryButtonPressed() {
         loadState()
     }
 

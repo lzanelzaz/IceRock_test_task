@@ -24,7 +24,7 @@ class RepositoriesListViewModel @Inject constructor(): ViewModel() {
 
     fun getState() : LiveData<State> = state
 
-    fun updateState() {
+    fun onRetryButtonPressed() {
         loadState()
     }
 

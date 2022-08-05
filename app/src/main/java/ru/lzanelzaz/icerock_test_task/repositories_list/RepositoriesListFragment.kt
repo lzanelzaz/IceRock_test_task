@@ -9,6 +9,8 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +28,7 @@ typealias Empty = RepositoriesListViewModel.State.Empty
 class RepositoriesListFragment : Fragment() {
 
     lateinit var binding: FragmentListRepositoriesBinding
-    private val viewModel : RepositoriesListViewModel by viewModels()
+    private val viewModel: RepositoriesListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,21 +47,21 @@ class RepositoriesListFragment : Fragment() {
     private fun bindToViewModel() {
         viewModel.getState().observe(viewLifecycleOwner) { state ->
             // Toolbar
-             binding.topAppBar.setOnMenuItemClickListener {
-                        when (it.itemId) {
-                            R.id.log_out -> {
-                                val sharedPref =
-                                    activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
-                                val editor = sharedPref?.edit()
-                                editor?.clear()
-                                editor?.commit()
-                                view?.findNavController()
-                                    ?.navigate(R.id.action_listRepositoriesFragment_to_authFragment)
-                                true
-                            }
-                            else -> false
-                        }
+            binding.topAppBar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.log_out -> {
+                        val sharedPref =
+                            activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
+                        val editor = sharedPref?.edit()
+                        editor?.clear()
+                        editor?.commit()
+                        findNavController()
+                            .navigate(R.id.action_listRepositoriesFragment_to_authFragment)
+                        true
                     }
+                    else -> false
+                }
+            }
             binding.topAppBar.updateLayoutParams<AppBarLayout.LayoutParams> {
                 scrollFlags = if (state is Loaded)
                     SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP

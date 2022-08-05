@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.KeyValueStorage
@@ -38,11 +39,10 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val sharedPref = activity?.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
         if (sharedPref?.getString("authToken", null) != null) {
             KeyValueStorage.authToken = sharedPref.getString("authToken", null)
-            view.findNavController()
+            findNavController()
                 .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
         }
 
@@ -117,8 +117,8 @@ class AuthFragment : Fragment() {
                 val editor = sharedPref?.edit()
                 editor?.putString("authToken", KeyValueStorage.authToken)
                 editor?.commit()
-                view?.findNavController()
-                    ?.navigate(R.id.action_authFragment_to_listRepositoriesFragment)
+                findNavController()
+                    .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
             }
         }
     }

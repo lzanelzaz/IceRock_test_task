@@ -69,7 +69,7 @@ class RepositoryInfoFragment : Fragment() {
                     else SCROLL_FLAG_NO_SCROLL
                 }
                 setNavigationOnClickListener {
-                    it.findNavController()
+                    findNavController()
                         .navigate(R.id.action_repositorylInfoFragment_to_listRepositoriesFragment)
                 }
 
@@ -84,8 +84,8 @@ class RepositoryInfoFragment : Fragment() {
                             val editor = sharedPref?.edit()
                             editor?.clear()
                             editor?.commit()
-                            view?.findNavController()
-                                ?.navigate(R.id.action_repositorylInfoFragment_to_authFragment)
+                            findNavController()
+                                .navigate(R.id.action_repositorylInfoFragment_to_authFragment)
                             true
                         }
                         else -> false

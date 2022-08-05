@@ -1,24 +1,17 @@
 package ru.lzanelzaz.icerock_test_task.repository_info
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
-import ru.lzanelzaz.icerock_test_task.KeyValueStorage
-import ru.lzanelzaz.icerock_test_task.NetworkModule
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class RepositoryInfoViewModel @Inject constructor(private val repository: AppRepository) :
     ViewModel() {
-    private val state = MutableLiveData<State>()
-    @Inject
-    lateinit var keyValueStorage: KeyValueStorage
+    private val _state = MutableLiveData<State>()
+    val state : LiveData<State> = _state
 
     sealed interface State {
         object Loading : State
@@ -31,6 +24,10 @@ class RepositoryInfoViewModel @Inject constructor(private val repository: AppRep
     }
 
     var repoId: String = ""
+    set(value) {
+        field = value
+        loadState()
+    }
 
     sealed interface ReadmeState {
         object Loading : ReadmeState
@@ -40,27 +37,19 @@ class RepositoryInfoViewModel @Inject constructor(private val repository: AppRep
     }
 
     fun logOut() {
-        keyValueStorage.logOut()
+        repository.logOut()
     }
-
-    fun getState(): LiveData<State> = state
 
     fun onRetryButtonPressed() {
         loadState()
     }
 
-    fun onClicked() {
-        loadState()
-    }
-
     private fun loadState() {
-        state.value = State.Loading
+        _state.value = State.Loading
         viewModelScope.launch {
             try {
                 val repository: RepoDetails = repository.getRepository(repoId)
-                state.value = State.Loaded(repository, ReadmeState.Loading)
                 loadReadmeState(repository)
-
             } catch (exception: Exception) {
                 val errorType = exception.toString()
 
@@ -68,21 +57,21 @@ class RepositoryInfoViewModel @Inject constructor(private val repository: AppRep
                     "java.net.UnknownHostException" -> "Connection error"
                     else -> "Something error"
                 }
-                state.value = State.Error(reason)
+                _state.value = State.Error(reason)
             }
         }
     }
 
     fun loadReadmeState(repo: RepoDetails) {
         viewModelScope.launch {
-            state.value = State.Loaded(repo, ReadmeState.Loading)
+            _state.value = State.Loaded(repo, ReadmeState.Loading)
             try {
                 val readme: String = repository.getRepositoryReadme(
                     repo.owner.login,
                     repo.name,
                     repo.defaultBranch
                 )
-                state.value = State.Loaded(repo, ReadmeState.Loaded(readme))
+                _state.value = State.Loaded(repo, ReadmeState.Loaded(readme))
             } catch (exception: Exception) {
                 val errorType = exception.toString()
 
@@ -92,7 +81,7 @@ class RepositoryInfoViewModel @Inject constructor(private val repository: AppRep
                     "java.net.UnknownHostException" -> ReadmeState.Error("Connection error")
                     else -> ReadmeState.Error("Something error")
                 }
-                state.value = State.Loaded(repo, readmeState)
+                _state.value = State.Loaded(repo, readmeState)
             }
         }
     }

@@ -26,11 +26,8 @@ typealias InvalidInput = AuthViewModel.State.InvalidInput
 
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
-
-    private lateinit var binding: FragmentAuthBinding
     private val viewModel: AuthViewModel by viewModels()
-    private var token: String = ""
-    @Inject lateinit var keyValueStorage: KeyValueStorage
+    private lateinit var binding: FragmentAuthBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,27 +39,18 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        token = keyValueStorage.authToken ?: ""
-        if (token != "") {
-            findNavController().navigate(R.id.action_authFragment_to_listRepositoriesFragment)
-        } else
-            bindToViewModel()
-
+        bindToViewModel()
     }
 
     private fun bindToViewModel() {
-
+        lifecycleScope.launch {
+            viewModel.actions.collect { handleAction(it) }
+        }
         binding.editToken.doOnTextChanged { text, _, _, _ ->
             binding.editToken.alpha = if (text.isNullOrEmpty()) 0.5F else 1F
         }
         binding.signInButton.setOnClickListener {
-            token = binding.editToken.text.toString()
-            viewModel.setToken(token)
-            viewModel.onSignButtonPressed()
-
-            lifecycleScope.launch {
-                viewModel.actions.collect { handleAction(it) }
-            }
+            viewModel.onSignButtonPressed(binding.editToken.text.toString())
 
             viewModel.state.observe(viewLifecycleOwner) { state ->
                 with(binding) {
@@ -85,6 +73,7 @@ class AuthFragment : Fragment() {
                 }
             }
         }
+
     }
 
     private fun getPersonalAccessTokenHintColor(state: State) = resources.getColor(
@@ -114,7 +103,6 @@ class AuthFragment : Fragment() {
                 dialog.show()
             }
             is AuthViewModel.Action.RouteToMain -> {
-                keyValueStorage.authToken = token
                 findNavController()
                     .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
             }

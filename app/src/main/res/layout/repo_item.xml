@@ -33,6 +33,7 @@
                 android:id="@+id/item_language"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/item_name"
                 app:layout_constraintEnd_toEndOf="parent"

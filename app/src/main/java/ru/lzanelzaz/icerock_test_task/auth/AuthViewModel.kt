@@ -1,5 +1,6 @@
 package ru.lzanelzaz.icerock_test_task.auth
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,21 +10,34 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
-import ru.lzanelzaz.icerock_test_task.KeyValueStorage
-import ru.lzanelzaz.icerock_test_task.NetworkModule
-import ru.lzanelzaz.icerock_test_task.R
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val repository: AppRepository): ViewModel() {
+class AuthViewModel @Inject constructor(private val repository: AppRepository) : ViewModel() {
+
     private val token = MutableLiveData<String>()
-    var state = MutableLiveData<State>(State.Loading)
+
+    private val _state = MutableLiveData<State>()
+    val state: LiveData<State> = _state
 
     private val _actions: Channel<Action> = Channel(Channel.BUFFERED)
     val actions: Flow<Action> = _actions.receiveAsFlow()
 
-    fun onSignButtonPressed() {
+    init {
+        if (repository.isSignedIn())
+            viewModelScope.launch {
+                _actions.send(Action.RouteToMain)
+            }
+    }
+
+    fun onSignButtonPressed(userToken: String) {
+        token.value = userToken
+        loadState()
+    }
+
+    private fun loadState() {
         viewModelScope.launch {
+            _state.value = State.Loading
             try {
                 repository.signIn(token.value.toString())
                 _actions.send(Action.RouteToMain)
@@ -34,7 +48,7 @@ class AuthViewModel @Inject constructor(private val repository: AppRepository): 
                     "java.net.UnknownHostException" -> "Connection error"
                     else -> "Invalid token"
                 }
-                state.value = when (reason) {
+                _state.value = when (reason) {
                     "Invalid token" -> State.InvalidInput(reason)
                     else -> {
                         _actions.send(Action.ShowError(reason))
@@ -43,10 +57,6 @@ class AuthViewModel @Inject constructor(private val repository: AppRepository): 
                 }
             }
         }
-    }
-
-    fun setToken(userToken: String) {
-        token.value = userToken
     }
 
     sealed interface State {

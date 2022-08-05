@@ -18,8 +18,7 @@ class KeyValueStorage @Inject constructor(@ApplicationContext context: Context) 
     }
 
     fun logOut() {
-        prefs.edit().clear().commit()
         authToken = null
+        prefs.edit().clear().commit()
     }
-
 }

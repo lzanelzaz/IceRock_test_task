@@ -4,17 +4,14 @@ import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
-import ru.lzanelzaz.icerock_test_task.KeyValueStorage
-import ru.lzanelzaz.icerock_test_task.NetworkModule
 import ru.lzanelzaz.icerock_test_task.model.Repo
 import javax.inject.Inject
 
 @HiltViewModel
 class RepositoriesListViewModel @Inject constructor(private val repository: AppRepository) :
     ViewModel() {
-    @Inject
-    lateinit var keyValueStorage: KeyValueStorage
-    private val state = MutableLiveData<State>()
+    private val _state = MutableLiveData<State>()
+    val state: LiveData<State> = _state
 
     sealed interface State {
         object Loading : State
@@ -23,29 +20,27 @@ class RepositoriesListViewModel @Inject constructor(private val repository: AppR
         object Empty : State
     }
 
-    fun getState(): LiveData<State> = state
+    init {
+        loadState()
+    }
 
     fun onRetryButtonPressed() {
         loadState()
     }
 
     fun logOut() {
-        keyValueStorage.logOut()
-    }
-
-    init {
-        loadState()
+        repository.logOut()
     }
 
     private fun loadState() {
-        state.value = State.Loading
         viewModelScope.launch {
+            _state.value = State.Loading
             try {
                 val repositories = repository.getRepositories()
                 if (repositories == emptyList<Repo>())
-                    state.value = State.Empty
+                    _state.value = State.Empty
                 else
-                    state.value = State.Loaded(repositories)
+                    _state.value = State.Loaded(repositories)
 
             } catch (exception: Exception) {
                 val errorType = exception.toString()
@@ -54,7 +49,7 @@ class RepositoriesListViewModel @Inject constructor(private val repository: AppR
                     "java.net.UnknownHostException" -> "Connection error"
                     else -> "Something error"
                 }
-                state.value = State.Error(reason)
+                _state.value = State.Error(reason)
             }
         }
     }

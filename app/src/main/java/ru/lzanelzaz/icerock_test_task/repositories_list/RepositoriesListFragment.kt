@@ -19,17 +19,16 @@ import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentListRepositoriesBinding
 import javax.inject.Inject
 
-typealias State = RepositoriesListViewModel.State
-typealias Loading = RepositoriesListViewModel.State.Loading
-typealias Loaded = RepositoriesListViewModel.State.Loaded
-typealias Error = RepositoriesListViewModel.State.Error
-typealias Empty = RepositoriesListViewModel.State.Empty
+private typealias State = RepositoriesListViewModel.State
+private typealias Loading = RepositoriesListViewModel.State.Loading
+private typealias Loaded = RepositoriesListViewModel.State.Loaded
+private typealias Error = RepositoriesListViewModel.State.Error
+private typealias Empty = RepositoriesListViewModel.State.Empty
 
 @AndroidEntryPoint
 class RepositoriesListFragment : Fragment() {
-
-    lateinit var binding: FragmentListRepositoriesBinding
     private val viewModel: RepositoriesListViewModel by viewModels()
+    lateinit var binding: FragmentListRepositoriesBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,13 +40,11 @@ class RepositoriesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         bindToViewModel()
     }
 
     private fun bindToViewModel() {
-        viewModel.getState().observe(viewLifecycleOwner) { state ->
-            // Toolbar
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.log_out -> {
@@ -64,7 +61,7 @@ class RepositoriesListFragment : Fragment() {
                     SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_SNAP
                 else SCROLL_FLAG_NO_SCROLL
             }
-            //recyclerView
+
             binding.listRepositoriesRecyclerView.adapter = getRecyclerViewAdapter(state)
 
             with(binding.stateViewLayout) {

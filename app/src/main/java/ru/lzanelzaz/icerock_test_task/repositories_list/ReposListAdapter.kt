@@ -40,14 +40,12 @@ class ReposListAdapter :
         fun bind(item: Repo) {
             with(binding) {
                 itemName.text = item.name
+
                 itemLanguage.text = item.language
-
-                if (item.description == null)
-                    itemDescription.visibility = View.GONE
-                else
-                    itemDescription.text = item.description
-
                 itemLanguage.setLanguageColor(item.language)
+
+                itemDescription.text = item.description
+                itemDescription.visibility = if (item.description == null) View.GONE else View.VISIBLE
             }
         }
 
@@ -67,7 +65,6 @@ class ReposListAdapter :
             }
         }
     }
-
     class DiffCallback : DiffUtil.ItemCallback<Repo>() {
         override fun areItemsTheSame(oldItem: Repo, newItem: Repo): Boolean {
             return oldItem.name == newItem.name
@@ -76,6 +73,5 @@ class ReposListAdapter :
         override fun areContentsTheSame(oldItem: Repo, newItem: Repo): Boolean {
             return oldItem == newItem
         }
-
     }
 }

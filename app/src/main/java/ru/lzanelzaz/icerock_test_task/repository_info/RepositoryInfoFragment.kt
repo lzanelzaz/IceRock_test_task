@@ -36,11 +36,8 @@ typealias ReadmeEmpty = RepositoryInfoViewModel.ReadmeState.Empty
 
 @AndroidEntryPoint
 class RepositoryInfoFragment : Fragment() {
-
-    lateinit var binding: FragmentRepositoryInfoBinding
-    lateinit var repoId: String
     private val viewModel: RepositoryInfoViewModel by viewModels()
-    @Inject lateinit var keyValueStorage: KeyValueStorage
+    lateinit var binding: FragmentRepositoryInfoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +48,7 @@ class RepositoryInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        repoId = requireNotNull(requireArguments().getString(REPO_ID))
+        super.onViewCreated(view, savedInstanceState)
         bindToViewModel()
     }
 
@@ -64,9 +61,9 @@ class RepositoryInfoFragment : Fragment() {
     }
 
     private fun bindToViewModel() {
+        val repoId = requireNotNull(requireArguments().getString(REPO_ID))
         viewModel.repoId = repoId
-        viewModel.onClicked()
-        viewModel.getState().observe(viewLifecycleOwner) { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             with(binding.topAppBar) {
                 title = repoId
                 updateLayoutParams<AppBarLayout.LayoutParams> {

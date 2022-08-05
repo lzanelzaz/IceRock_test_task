@@ -10,9 +10,11 @@ import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
+import dagger.hilt.android.AndroidEntryPoint
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
@@ -31,23 +33,23 @@ typealias ReadmeLoaded = RepositoryInfoViewModel.ReadmeState.Loaded
 typealias ReadmeError = RepositoryInfoViewModel.ReadmeState.Error
 typealias ReadmeEmpty = RepositoryInfoViewModel.ReadmeState.Empty
 
+@AndroidEntryPoint
 class RepositoryInfoFragment : Fragment() {
 
     lateinit var binding: FragmentRepositoryInfoBinding
     lateinit var repoId: String
-    lateinit var viewModel: RepositoryInfoViewModel
+    private val viewModel: RepositoryInfoViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRepositoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         repoId = requireNotNull(requireArguments().getString(REPO_ID))
-        viewModel = RepositoryInfoViewModel(repoId)
         bindToViewModel()
     }
 
@@ -60,6 +62,8 @@ class RepositoryInfoFragment : Fragment() {
     }
 
     private fun bindToViewModel() {
+        viewModel.repoId = repoId
+        viewModel.onClicked()
         viewModel.getState().observe(viewLifecycleOwner) { state ->
             with(binding.topAppBar) {
                 title = repoId

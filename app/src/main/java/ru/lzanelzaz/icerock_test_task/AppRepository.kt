@@ -11,26 +11,38 @@ import javax.inject.Singleton
 
 
 @Singleton
-class AppRepository @Inject constructor() {
+class AppRepository @Inject constructor(
+    private val githubApiService: GithubApiService,
+    private val githubRawUserContentService: GithubRawUserContentService
+) {
 
     suspend fun getRepositories(): List<Repo> {
-        return NetworkModule.provideGithubApiService().getRepositories("token ${KeyValueStorage.authToken}")
+        return githubApiService.getRepositories("token ${KeyValueStorage.authToken}")
     }
 
     suspend fun getRepository(repoId: String): RepoDetails {
-        return NetworkModule.provideGithubApiService().getRepository("token ${KeyValueStorage.authToken}", repoId)
+        return githubApiService.getRepository("token ${KeyValueStorage.authToken}", repoId)
     }
 
-    suspend fun getRepositoryReadme(ownerName: String, repositoryName: String, branchName: String): String {
-        return NetworkModule.provideGithubRawUserContentService().getRepositoryReadme(ownerName, repositoryName, branchName)
+    suspend fun getRepositoryReadme(
+        ownerName: String,
+        repositoryName: String,
+        branchName: String
+    ): String {
+        return githubRawUserContentService.getRepositoryReadme(
+            ownerName,
+            repositoryName,
+            branchName
+        )
     }
 
-    suspend fun signIn(token: String) : UserInfo {
+    suspend fun signIn(token: String): UserInfo {
         KeyValueStorage.authToken = token
-        return NetworkModule.provideGithubApiService().signIn("token ${KeyValueStorage.authToken}")
+        return githubApiService.signIn("token ${KeyValueStorage.authToken}")
     }
 
 }
+
 interface GithubApiService {
     @GET("user")
     suspend fun signIn(@Header("Authorization") token: String): UserInfo

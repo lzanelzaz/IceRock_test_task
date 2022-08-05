@@ -7,12 +7,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
+import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.NetworkModule
 import ru.lzanelzaz.icerock_test_task.model.Repo
 import javax.inject.Inject
 
 @HiltViewModel
-class RepositoriesListViewModel @Inject constructor(): ViewModel() {
+class RepositoriesListViewModel @Inject constructor(private val repository: AppRepository): ViewModel() {
 
     private val state = MutableLiveData<State>()
 
@@ -37,7 +38,7 @@ class RepositoriesListViewModel @Inject constructor(): ViewModel() {
         state.value = State.Loading
         viewModelScope.launch {
             try {
-                val repositories = NetworkModule.getAppRepository().getRepositories()
+                val repositories = repository.getRepositories()
                 if (repositories == emptyList<Repo>())
                     state.value = State.Empty
                 else

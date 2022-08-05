@@ -7,8 +7,12 @@ import ru.lzanelzaz.icerock_test_task.model.Repo
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import ru.lzanelzaz.icerock_test_task.model.UserInfo
 import javax.inject.Inject
+import javax.inject.Singleton
 
+
+@Singleton
 class AppRepository @Inject constructor() {
+
     suspend fun getRepositories(): List<Repo> {
         return NetworkModule.provideGithubApiService().getRepositories("token ${KeyValueStorage.authToken}")
     }

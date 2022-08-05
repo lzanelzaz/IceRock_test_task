@@ -14,6 +14,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    @Provides
+    @Singleton
+    fun getAppRepository(): AppRepository = AppRepository()
+
     @Singleton
     @Provides
     fun provideGithubApiService(): GithubApiService = Retrofit.Builder()

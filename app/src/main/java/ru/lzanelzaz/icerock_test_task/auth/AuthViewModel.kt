@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
+import ru.lzanelzaz.icerock_test_task.NetworkModule
 import ru.lzanelzaz.icerock_test_task.R
 import javax.inject.Inject
 
@@ -24,7 +25,7 @@ class AuthViewModel @Inject constructor(): ViewModel() {
     fun onSignButtonPressed() {
         viewModelScope.launch {
             try {
-                AppRepository().signIn(token.value!!)
+                NetworkModule.getAppRepository().signIn(token.value!!)
                 _actions.send(Action.RouteToMain)
             } catch (exception: Exception) {
                 val errorType = exception.toString()

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
+import ru.lzanelzaz.icerock_test_task.NetworkModule
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 
 class RepositoryInfoViewModel (private val repoId: String) : ViewModel() {
@@ -42,7 +43,7 @@ class RepositoryInfoViewModel (private val repoId: String) : ViewModel() {
         state.value = State.Loading
         viewModelScope.launch {
             try {
-                val repository: RepoDetails = AppRepository().getRepository(repoId)
+                val repository: RepoDetails = NetworkModule.getAppRepository().getRepository(repoId)
                 state.value = State.Loaded(repository, ReadmeState.Loading)
                 loadReadmeState(repository)
 
@@ -62,7 +63,7 @@ class RepositoryInfoViewModel (private val repoId: String) : ViewModel() {
         viewModelScope.launch {
             state.value = State.Loaded(repository, ReadmeState.Loading)
             try {
-                val readme: String = AppRepository().getRepositoryReadme(
+                val readme: String = NetworkModule.getAppRepository().getRepositoryReadme(
                     repository.owner.login,
                     repository.name,
                     repository.defaultBranch

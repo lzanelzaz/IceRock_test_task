@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
+import javax.inject.Inject
 
 typealias State = AuthViewModel.State
 typealias Loading = AuthViewModel.State.Loading

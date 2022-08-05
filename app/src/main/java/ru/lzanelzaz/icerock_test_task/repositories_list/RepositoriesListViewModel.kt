@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.AppRepository
+import ru.lzanelzaz.icerock_test_task.NetworkModule
 import ru.lzanelzaz.icerock_test_task.model.Repo
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class RepositoriesListViewModel @Inject constructor(): ViewModel() {
         state.value = State.Loading
         viewModelScope.launch {
             try {
-                val repositories = AppRepository().getRepositories()
+                val repositories = NetworkModule.getAppRepository().getRepositories()
                 if (repositories == emptyList<Repo>())
                     state.value = State.Empty
                 else

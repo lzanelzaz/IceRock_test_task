@@ -25,12 +25,11 @@ class ReposListAdapter :
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
-
         holder.itemView.setOnClickListener { view ->
             view.findNavController()
                 .navigate(
-                    R.id.action_listRepositoriesFragment_to_repositorylInfoFragment,
-                    RepositoryInfoFragment.createArguments(repoId = item.name)
+                    R.id.action_listRepositoriesFragment_to_repositoryInfoFragment,
+                    RepositoryInfoFragment.createArguments(repoName = item.name)
                 )
         }
     }
@@ -45,26 +44,27 @@ class ReposListAdapter :
                 itemLanguage.setLanguageColor(item.language)
 
                 itemDescription.text = item.description
-                itemDescription.visibility = if (item.description == null) View.GONE else View.VISIBLE
+                itemDescription.visibility =
+                    if (item.description == null) View.GONE else View.VISIBLE
             }
         }
 
         private fun TextView.setLanguageColor(language: String?) {
-            if (language != null) {
-                // Parse json (language objects)
-                val fileContent: String = context.assets
-                    .open("values/github_lang_colors.json")
-                    .bufferedReader().use { it.readText() }
+            if (language != null) return
+            // Parse json (language objects)
+            val fileContent: String = context.assets
+                .open("values/github_lang_colors.json")
+                .bufferedReader().use { it.readText() }
 
-                val languageColor: String = JSONObject(fileContent)
-                    .getJSONObject(language).optString("color")
-                    // white color in case of null language color
-                    .replace("null", "#FFFFFFFF")
+            val languageColor: String = JSONObject(fileContent)
+                .getJSONObject(language).optString("color")
+                // white color in case of null language color
+                .replace("null", "#FFFFFFFF")
 
-                setTextColor(Color.parseColor(languageColor))
-            }
+            setTextColor(Color.parseColor(languageColor))
         }
     }
+
     class DiffCallback : DiffUtil.ItemCallback<Repo>() {
         override fun areItemsTheSame(oldItem: Repo, newItem: Repo): Boolean {
             return oldItem.name == newItem.name

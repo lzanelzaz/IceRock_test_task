@@ -12,10 +12,10 @@ class KeyValueStorage @Inject constructor(@ApplicationContext context: Context) 
         context.getSharedPreferences("USER_API_TOKEN", Context.MODE_PRIVATE)
 
     var authToken: String? = prefs.getString("authToken", null)
-    set(value) {
-        field = value
-        prefs.edit().putString("authToken", value).commit()
-    }
+        set(value) {
+            field = value
+            prefs.edit().putString("authToken", value).commit()
+        }
 
     fun logOut() {
         authToken = null

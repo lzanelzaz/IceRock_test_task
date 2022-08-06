@@ -28,7 +28,10 @@ class AppRepository @Inject constructor(
     }
 
     suspend fun getRepository(repoId: String): RepoDetails {
-        return githubApiService.getRepository("token ${keyValueStorage.authToken}", repoId)
+        return githubApiService.getRepository(
+            token = "token ${keyValueStorage.authToken}",
+            repoId = repoId
+        )
     }
 
     suspend fun getRepositoryReadme(
@@ -37,7 +40,7 @@ class AppRepository @Inject constructor(
         branchName: String
     ): String {
         return githubRawUserContentService.getRepositoryReadme(
-            ownerName, repositoryName, branchName
+            ownerName = ownerName, repositoryName = repositoryName, branchName = branchName
         )
     }
 }

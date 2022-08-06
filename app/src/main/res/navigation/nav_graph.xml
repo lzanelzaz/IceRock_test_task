@@ -23,19 +23,19 @@
             android:id="@+id/action_listRepositoriesFragment_to_authFragment"
             app:destination="@id/authFragment" />
         <action
-            android:id="@+id/action_listRepositoriesFragment_to_repositorylInfoFragment"
-            app:destination="@id/repositorylInfoFragment" />
+            android:id="@+id/action_listRepositoriesFragment_to_repositoryInfoFragment"
+            app:destination="@id/repositoryInfoFragment" />
     </fragment>
     <fragment
-        android:id="@+id/repositorylInfoFragment"
+        android:id="@+id/repositoryInfoFragment"
         android:name="ru.lzanelzaz.icerock_test_task.repository_info.RepositoryInfoFragment"
-        android:label="RepositorylInfoFragment"
-        tools:layout="@layout/fragment_repository_info" >
+        android:label="RepositoryInfoFragment"
+        tools:layout="@layout/fragment_repository_info">
         <action
-            android:id="@+id/action_repositorylInfoFragment_to_authFragment"
+            android:id="@+id/action_repositoryInfoFragment_to_authFragment"
             app:destination="@id/authFragment" />
         <action
-            android:id="@+id/action_repositorylInfoFragment_to_listRepositoriesFragment"
+            android:id="@+id/action_repositoryInfoFragment_to_listRepositoriesFragment"
             app:destination="@id/listRepositoriesFragment" />
     </fragment>
 </navigation>

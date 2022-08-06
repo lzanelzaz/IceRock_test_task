@@ -35,7 +35,11 @@ object RepositoryModule {
         githubApiService: GithubApiService,
         githubRawUserContentService: GithubRawUserContentService,
         keyValueStorage: KeyValueStorage
-    ): AppRepository = AppRepository(githubApiService, githubRawUserContentService, keyValueStorage)
+    ): AppRepository = AppRepository(
+        githubApiService = githubApiService,
+        githubRawUserContentService = githubRawUserContentService,
+        keyValueStorage = keyValueStorage
+    )
 
     @Provides
     @Singleton

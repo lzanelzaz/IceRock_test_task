@@ -17,11 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
-import ru.lzanelzaz.icerock_test_task.KeyValueStorage
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
-import javax.inject.Inject
 
 typealias State = RepositoryInfoViewModel.State
 typealias Loading = RepositoryInfoViewModel.State.Loading
@@ -52,16 +50,8 @@ class RepositoryInfoFragment : Fragment() {
         bindToViewModel()
     }
 
-    companion object {
-        private const val REPO_ID = "repoId"
-
-        fun createArguments(repoId: String): Bundle {
-            return bundleOf(REPO_ID to repoId)
-        }
-    }
-
     private fun bindToViewModel() {
-        val repoId = requireNotNull(requireArguments().getString(REPO_ID))
+        val repoId = requireNotNull(requireArguments().getString(REPO_NAME_ARG_KEY))
         viewModel.repoId = repoId
         viewModel.state.observe(viewLifecycleOwner) { state ->
             with(binding.topAppBar) {
@@ -73,15 +63,14 @@ class RepositoryInfoFragment : Fragment() {
                 }
                 setNavigationOnClickListener {
                     findNavController()
-                        .navigate(R.id.action_repositorylInfoFragment_to_listRepositoriesFragment)
+                        .navigate(R.id.action_repositoryInfoFragment_to_listRepositoriesFragment)
                 }
-
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.log_out -> {
                             viewModel.logOut()
                             findNavController()
-                                .navigate(R.id.action_repositorylInfoFragment_to_authFragment)
+                                .navigate(R.id.action_repositoryInfoFragment_to_authFragment)
                             true
                         }
                         else -> false
@@ -118,54 +107,52 @@ class RepositoryInfoFragment : Fragment() {
 
                 retryButton.setOnClickListener { viewModel.onRetryButtonPressed() }
             }
-
             loadReadme(state)
         }
     }
 
     private fun loadReadme(state: State) {
-        if (state is Loaded) {
-            val readmeState = state.readmeState
-            binding.readmeTextView.text = when (readmeState) {
-                is ReadmeLoaded -> {
-                    val markdown = readmeState.markdown
-                    // delete badges
-                    val src = markdown.drop(markdown.indexOf('#'))
-                    val flavour = CommonMarkFlavourDescriptor()
-                    val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(src)
-                    val html = HtmlGenerator(src, parsedTree, flavour).generateHtml()
-                    HtmlCompat.fromHtml(html, FROM_HTML_MODE_LEGACY)
-                }
-                is ReadmeEmpty -> resources.getString(R.string.no_readme)
-                else -> null
+        if (state !is Loaded) return
+        val readmeState = state.readmeState
+        binding.readmeTextView.text = when (readmeState) {
+            is ReadmeLoaded -> {
+                val markdown = readmeState.markdown
+                // delete badges
+                val src = markdown.drop(markdown.indexOf('#'))
+                val flavour = CommonMarkFlavourDescriptor()
+                val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(src)
+                val html = HtmlGenerator(src, parsedTree, flavour).generateHtml()
+                HtmlCompat.fromHtml(html, FROM_HTML_MODE_LEGACY)
             }
-
-            with(binding.stateViewLayout) {
-                // Error/ loading view
-                stateView.visibility =
-                    if (readmeState is ReadmeLoaded || readmeState is ReadmeEmpty) View.GONE else View.VISIBLE
-                statusImageView.visibility =
-                    if (readmeState is ReadmeError) View.VISIBLE else View.GONE
-
-                statusImageView.setImageResource(getImageResource(readmeState))
-
-                errorTextView.text = getErrorText(readmeState)
-                hintTextView.text = getErrorHintText(readmeState)
-
-                retryButton.visibility =
-                    if (readmeState is ReadmeError) View.VISIBLE else View.GONE
-
-                retryButton.setOnClickListener {
-                    viewModel.loadReadmeState(state.githubRepo)
-                }
-            }
-            binding.loadingImageView.visibility =
-                if (readmeState is ReadmeLoading) View.VISIBLE else View.GONE
+            is ReadmeEmpty -> resources.getString(R.string.no_readme)
+            else -> null
         }
+        with(binding.stateViewLayout) {
+            // Error/ loading view
+            stateView.visibility =
+                if (readmeState is ReadmeLoaded || readmeState is ReadmeEmpty) View.GONE else View.VISIBLE
+            statusImageView.visibility =
+                if (readmeState is ReadmeError) View.VISIBLE else View.GONE
+
+            statusImageView.setImageResource(getImageResource(readmeState))
+
+            errorTextView.text = getErrorText(readmeState)
+            hintTextView.text = getErrorHintText(readmeState)
+
+            retryButton.visibility =
+                if (readmeState is ReadmeError) View.VISIBLE else View.GONE
+
+            retryButton.setOnClickListener {
+                viewModel.loadReadmeState(state.githubRepo)
+            }
+        }
+        binding.loadingImageView.visibility =
+            if (readmeState is ReadmeLoading) View.VISIBLE else View.GONE
+
     }
 
     // State.Error, State.Empty, State.Loading -> resId
-// State.Loaded -> non
+    // State.Loaded -> non
     private fun getImageResource(state: State): Int = when (state) {
         is Loading -> R.drawable.loading_animation
         is Error ->
@@ -177,7 +164,7 @@ class RepositoryInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-// State.Loaded, State.Loading -> null
+    // State.Loaded, State.Loading -> null
     private fun getErrorText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
@@ -188,7 +175,7 @@ class RepositoryInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-// State.Loaded, State.Loading -> null
+    // State.Loaded, State.Loading -> null
     private fun getErrorHintText(state: State): String? = when (state) {
         is Error ->
             when (state.error) {
@@ -198,7 +185,7 @@ class RepositoryInfoFragment : Fragment() {
         else -> null
     }
 
-
+    // Readme block
     private fun getImageResource(state: ReadmeState): Int = when (state) {
         is ReadmeError ->
             when (state.error) {
@@ -209,7 +196,7 @@ class RepositoryInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-// State.Loaded, State.Loading -> null
+    // State.Loaded, State.Loading -> null
     private fun getErrorText(state: ReadmeState): String? = when (state) {
         is ReadmeError ->
             when (state.error) {
@@ -220,7 +207,7 @@ class RepositoryInfoFragment : Fragment() {
     }
 
     // State.Error, State.Empty -> String
-// State.Loaded, State.Loading -> null
+    // State.Loaded, State.Loading -> null
     private fun getErrorHintText(state: ReadmeState): String? = when (state) {
         is ReadmeError ->
             when (state.error) {
@@ -230,4 +217,11 @@ class RepositoryInfoFragment : Fragment() {
         else -> null
     }
 
+    companion object {
+        private const val REPO_NAME_ARG_KEY = "repoId"
+
+        fun createArguments(repoName: String): Bundle {
+            return bundleOf(REPO_NAME_ARG_KEY to repoName)
+        }
+    }
 }

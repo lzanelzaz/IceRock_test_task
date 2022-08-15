@@ -50,7 +50,7 @@ class ReposListAdapter :
         }
 
         private fun TextView.setLanguageColor(language: String?) {
-            if (language != null) return
+            if (language == null) return
             // Parse json (language objects)
             val fileContent: String = context.assets
                 .open("values/github_lang_colors.json")

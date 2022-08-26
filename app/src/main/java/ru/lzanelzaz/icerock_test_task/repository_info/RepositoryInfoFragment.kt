@@ -62,8 +62,7 @@ class RepositoryInfoFragment : Fragment() {
                     else SCROLL_FLAG_NO_SCROLL
                 }
                 setNavigationOnClickListener {
-                    findNavController()
-                        .navigate(R.id.action_repositoryInfoFragment_to_listRepositoriesFragment)
+                    findNavController().navigateUp()
                 }
                 setOnMenuItemClickListener {
                     when (it.itemId) {

@@ -12,7 +12,10 @@
         tools:layout="@layout/fragment_auth">
         <action
             android:id="@+id/action_authFragment_to_listRepositoriesFragment"
-            app:destination="@id/listRepositoriesFragment" />
+            app:destination="@id/listRepositoriesFragment"
+
+            app:popUpTo="@+id/authFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/listRepositoriesFragment"
@@ -34,8 +37,5 @@
         <action
             android:id="@+id/action_repositoryInfoFragment_to_authFragment"
             app:destination="@id/authFragment" />
-        <action
-            android:id="@+id/action_repositoryInfoFragment_to_listRepositoriesFragment"
-            app:destination="@id/listRepositoriesFragment" />
     </fragment>
 </navigation>

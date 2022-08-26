@@ -1,6 +1,6 @@
 # IceRock_test_task
  
-Нужно разработать android приложение для просмотра GitHub репозиториев.
+[Нужно разработать android приложение для просмотра GitHub репозиториев.](https://kmm.icerock.dev/university/android-basics/practice)
 
 ![screenshot](https://i.ibb.co/RPM3cQZ/Photo-2022-08-06-08-05-48-2.jpg)
 
@@ -16,10 +16,11 @@
 
 ![screenshot](https://i.ibb.co/YWBxYbx/Screenshot-20220806-085549.png)
 
-Log in https://s4.gifyu.com/images/ezgif-5-f6b398a6b9.gif
+[Log in gif](https://s4.gifyu.com/images/ezgif-5-f6b398a6b9.gif)
 
-Loading https://s4.gifyu.com/images/ezgif-5-38bfc6038e.gif
+[Loading gif](https://s4.gifyu.com/images/ezgif-5-38bfc6038e.gif)
 
-Readme loading error https://s4.gifyu.com/images/ezgif-5-0a15131362.gif
+[Readme loading error gif](https://s4.gifyu.com/images/ezgif-5-0a15131362.gif)
  
-Log out https://s4.gifyu.com/images/ezgif-5-6b5224c18f.gif
+[Log out gif](https://s4.gifyu.com/images/ezgif-5-6b5224c18f.gif)
+

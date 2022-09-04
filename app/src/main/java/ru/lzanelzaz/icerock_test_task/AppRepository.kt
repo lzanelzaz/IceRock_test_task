@@ -1,5 +1,7 @@
 package ru.lzanelzaz.icerock_test_task
 
+import ru.lzanelzaz.icerock_test_task.api.GithubApiService
+import ru.lzanelzaz.icerock_test_task.api.GithubRawUserContentService
 import ru.lzanelzaz.icerock_test_task.model.Repo
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import ru.lzanelzaz.icerock_test_task.model.UserInfo

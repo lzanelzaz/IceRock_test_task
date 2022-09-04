@@ -20,13 +20,14 @@ import org.intellij.markdown.parser.MarkdownParser
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
+import ru.lzanelzaz.icerock_test_task.getErrorHintText
+import ru.lzanelzaz.icerock_test_task.getErrorText
+import ru.lzanelzaz.icerock_test_task.getImageResource
 
 typealias State = RepositoryInfoViewModel.State
 typealias Loading = RepositoryInfoViewModel.State.Loading
 typealias Loaded = RepositoryInfoViewModel.State.Loaded
-typealias Error = RepositoryInfoViewModel.State.Error
 
-typealias ReadmeState = RepositoryInfoViewModel.ReadmeState
 typealias ReadmeLoading = RepositoryInfoViewModel.ReadmeState.Loading
 typealias ReadmeLoaded = RepositoryInfoViewModel.ReadmeState.Loaded
 typealias ReadmeError = RepositoryInfoViewModel.ReadmeState.Error
@@ -67,7 +68,7 @@ class RepositoryInfoFragment : Fragment() {
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.log_out -> {
-                            viewModel.logOut()
+                            viewModel.onLogOutButtonPressed()
                             findNavController()
                                 .navigate(R.id.action_repositoryInfoFragment_to_authFragment)
                             true
@@ -142,78 +143,12 @@ class RepositoryInfoFragment : Fragment() {
                 if (readmeState is ReadmeError) View.VISIBLE else View.GONE
 
             retryButton.setOnClickListener {
-                viewModel.loadReadmeState(state.githubRepo)
+                viewModel.onRetryButtonPressed()
             }
         }
         binding.loadingImageView.visibility =
             if (readmeState is ReadmeLoading) View.VISIBLE else View.GONE
 
-    }
-
-    // State.Error, State.Empty, State.Loading -> resId
-    // State.Loaded -> non
-    private fun getImageResource(state: State): Int = when (state) {
-        is Loading -> R.drawable.loading_animation
-        is Error ->
-            when (state.error) {
-                "Connection error" -> R.drawable.connection_error
-                else -> R.drawable.something_error
-            }
-        else -> 0
-    }
-
-    // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
-    private fun getErrorText(state: State): String? = when (state) {
-        is Error ->
-            when (state.error) {
-                "Connection error" -> resources.getString(R.string.connection_error)
-                else -> resources.getString(R.string.something_error)
-            }
-        else -> null
-    }
-
-    // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
-    private fun getErrorHintText(state: State): String? = when (state) {
-        is Error ->
-            when (state.error) {
-                "Connection error" -> resources.getString(R.string.connection_error_hint)
-                else -> resources.getString(R.string.something_error_hint)
-            }
-        else -> null
-    }
-
-    // Readme block
-    private fun getImageResource(state: ReadmeState): Int = when (state) {
-        is ReadmeError ->
-            when (state.error) {
-                "Connection error" -> R.drawable.connection_error
-                else -> R.drawable.something_error
-            }
-        else -> 0
-    }
-
-    // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
-    private fun getErrorText(state: ReadmeState): String? = when (state) {
-        is ReadmeError ->
-            when (state.error) {
-                "Connection error" -> resources.getString(R.string.connection_error)
-                else -> resources.getString(R.string.something_error)
-            }
-        else -> null
-    }
-
-    // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
-    private fun getErrorHintText(state: ReadmeState): String? = when (state) {
-        is ReadmeError ->
-            when (state.error) {
-                "Connection error" -> resources.getString(R.string.connection_error_hint)
-                else -> resources.getString(R.string.something_error_hint)
-            }
-        else -> null
     }
 
     companion object {

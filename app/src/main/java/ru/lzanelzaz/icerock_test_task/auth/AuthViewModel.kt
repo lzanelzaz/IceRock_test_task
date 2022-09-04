@@ -41,20 +41,14 @@ class AuthViewModel @Inject constructor(private val repository: AppRepository) :
             try {
                 repository.signIn(token.value.toString())
                 _actions.send(Action.RouteToMain)
+            } catch (exception: retrofit2.HttpException) {
+                _actions.send(Action.ShowError("Error data"))
+                _state.value = State.Idle
+            } catch (exception: java.net.UnknownHostException) {
+                _actions.send(Action.ShowError("Connection error"))
+                _state.value = State.Idle
             } catch (exception: Exception) {
-                val errorType = exception.toString()
-                val reason = when (errorType.slice(0 until errorType.indexOf(':'))) {
-                    "retrofit2.HttpException" -> "Error data"
-                    "java.net.UnknownHostException" -> "Connection error"
-                    else -> "Invalid token"
-                }
-                _state.value = when (reason) {
-                    "Invalid token" -> State.InvalidInput(reason)
-                    else -> {
-                        _actions.send(Action.ShowError(reason))
-                        State.Idle
-                    }
-                }
+                _state.value = State.InvalidInput("Invalid token")
             }
         }
     }
@@ -69,5 +63,4 @@ class AuthViewModel @Inject constructor(private val repository: AppRepository) :
         data class ShowError(val message: String) : Action
         object RouteToMain : Action
     }
-
 }

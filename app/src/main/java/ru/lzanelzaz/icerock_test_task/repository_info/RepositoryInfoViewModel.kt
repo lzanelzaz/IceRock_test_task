@@ -23,33 +23,36 @@ class RepositoryInfoViewModel @Inject constructor(private val repository: AppRep
         }
 
     fun onRetryButtonPressed() {
-        loadState()
+        if (_state.value is State.Loaded)
+            loadReadmeState((_state.value as State.Loaded).githubRepo)
+        else
+            loadState()
     }
 
-    fun logOut() {
+    fun onLogOutButtonPressed() {
         repository.logOut()
     }
 
-    fun loadReadmeState(repo: RepoDetails) {
+    private fun loadReadmeState(repo: RepoDetails) {
         viewModelScope.launch {
             _state.value = State.Loaded(repo, ReadmeState.Loading)
-            try {
+            val readmeState = try {
                 val readme: String = repository.getRepositoryReadme(
-                    repo.owner.login,
-                    repo.name,
-                    repo.defaultBranch
+                    ownerName = repo.owner.login,
+                    repositoryName = repo.name,
+                    branchName = repo.defaultBranch
                 )
-                _state.value = State.Loaded(repo, ReadmeState.Loaded(readme))
+                ReadmeState.Loaded(readme)
+            } catch (exception: retrofit2.HttpException) {
+                ReadmeState.Empty
+            } catch (exception: java.net.ConnectException) {
+                ReadmeState.Error("Connection error")
+            } catch (exception: java.net.UnknownHostException) {
+                ReadmeState.Error("Connection error")
             } catch (exception: Exception) {
-                val errorType = exception.toString()
-                val readmeState = when (errorType.slice(0 until errorType.indexOf(':'))) {
-                    "retrofit2.HttpException" -> ReadmeState.Empty
-                    "java.net.ConnectException" -> ReadmeState.Error("Connection error")
-                    "java.net.UnknownHostException" -> ReadmeState.Error("Connection error")
-                    else -> ReadmeState.Error("Something error")
-                }
-                _state.value = State.Loaded(repo, readmeState)
+                ReadmeState.Error("Something error")
             }
+            _state.value = State.Loaded(repo, readmeState)
         }
     }
 
@@ -59,13 +62,10 @@ class RepositoryInfoViewModel @Inject constructor(private val repository: AppRep
             try {
                 val repository: RepoDetails = repository.getRepository(repoId)
                 loadReadmeState(repository)
+            } catch (exception: java.net.UnknownHostException) {
+                _state.value = State.Error("Connection error")
             } catch (exception: Exception) {
-                val errorType = exception.toString()
-                val reason = when (errorType.slice(0 until errorType.indexOf(':'))) {
-                    "java.net.UnknownHostException" -> "Connection error"
-                    else -> "Something error"
-                }
-                _state.value = State.Error(reason)
+                _state.value = State.Error("Something error")
             }
         }
     }

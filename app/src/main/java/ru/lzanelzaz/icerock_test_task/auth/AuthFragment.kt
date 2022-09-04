@@ -1,6 +1,5 @@
 package ru.lzanelzaz.icerock_test_task.auth
 
-import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,15 +9,13 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentAuthBinding
 
-typealias State = AuthViewModel.State
-typealias Loading = AuthViewModel.State.Loading
-typealias InvalidInput = AuthViewModel.State.InvalidInput
+private typealias Loading = AuthViewModel.State.Loading
+private typealias InvalidInput = AuthViewModel.State.InvalidInput
 
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
@@ -35,13 +32,13 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.launch {
+            viewModel.actions.collect { handleAction(view, it) }
+        }
         bindToViewModel()
     }
 
     private fun bindToViewModel() {
-        lifecycleScope.launch {
-            viewModel.actions.collect { handleAction(it) }
-        }
         binding.editToken.doOnTextChanged { text, _, _, _ ->
             binding.editToken.alpha = if (text.isNullOrEmpty()) 0.5F else 1F
         }
@@ -67,40 +64,6 @@ class AuthFragment : Fragment() {
                     invalidTokenError.visibility =
                         if (state is InvalidInput) View.VISIBLE else View.INVISIBLE
                 }
-            }
-        }
-
-    }
-
-    private fun getPersonalAccessTokenHintColor(state: State) = resources.getColor(
-        when (state) {
-            is InvalidInput -> R.color.error
-            is Loading -> R.color.secondary
-            else -> R.color.white
-        }
-    )
-
-    private fun handleAction(action: AuthViewModel.Action) {
-        when (action) {
-            is AuthViewModel.Action.ShowError -> {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle(
-                    if (action.message == "Error data") resources.getString(R.string.error_dialog_title)
-                    else resources.getString(R.string.connection_error)
-                )
-                    .setMessage(
-                        if (action.message == "Error data") resources.getString(R.string.error_dialog_message)
-                        else resources.getString(R.string.connection_error_hint)
-                    )
-                    .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
-                        dialog.cancel()
-                    }
-                val dialog = builder.create()
-                dialog.show()
-            }
-            is AuthViewModel.Action.RouteToMain -> {
-                findNavController()
-                    .navigate(R.id.action_authFragment_to_listRepositoriesFragment)
             }
         }
     }

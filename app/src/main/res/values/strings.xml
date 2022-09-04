@@ -17,7 +17,7 @@
     <string name="empty_error_hint">No repositories at the moment</string>
 
     <string name="something_error">Something error</string>
-    <string name="something_error_hint">Check your something</string>
+    <string name="something_error_hint">Check your something\n(Probably token expired)</string>
 
     <string name="retry_button">Retry</string>
     <string name="refresh_button">Refresh</string>

@@ -16,12 +16,14 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import dagger.hilt.android.AndroidEntryPoint
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentListRepositoriesBinding
+import ru.lzanelzaz.icerock_test_task.getErrorHintText
+import ru.lzanelzaz.icerock_test_task.getErrorText
+import ru.lzanelzaz.icerock_test_task.getErrorTextColor
+import ru.lzanelzaz.icerock_test_task.getImageResource
+import ru.lzanelzaz.icerock_test_task.getRetryButtonText
 
-private typealias State = RepositoriesListViewModel.State
 private typealias Loading = RepositoriesListViewModel.State.Loading
 private typealias Loaded = RepositoriesListViewModel.State.Loaded
-private typealias Error = RepositoriesListViewModel.State.Error
-private typealias Empty = RepositoriesListViewModel.State.Empty
 
 @AndroidEntryPoint
 class RepositoriesListFragment : Fragment() {
@@ -46,7 +48,7 @@ class RepositoriesListFragment : Fragment() {
             binding.topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.log_out -> {
-                        viewModel.logOut()
+                        viewModel.onLogOutButtonPressed()
                         findNavController()
                             .navigate(R.id.action_listRepositoriesFragment_to_authFragment)
                         true
@@ -68,6 +70,7 @@ class RepositoriesListFragment : Fragment() {
                     if (state is Loaded) View.GONE else View.VISIBLE
 
                 statusImageView.setImageResource(getImageResource(state))
+                println(getImageResource(state))
 
                 errorTextView.text = getErrorText(state)
                 errorTextView.setTextColor(getErrorTextColor(state))
@@ -83,64 +86,4 @@ class RepositoriesListFragment : Fragment() {
         }
     }
 
-    private fun getRecyclerViewAdapter(state: State): ReposListAdapter {
-        val myRecyclerViewAdapter = ReposListAdapter()
-        val dataset = if (state is Loaded)
-            state.repos
-        else
-            emptyList()
-        myRecyclerViewAdapter.submitList(dataset)
-        return myRecyclerViewAdapter
-    }
-
-    // State.Error, State.Empty, State.Loading -> resId
-    // State.Loaded -> non
-    private fun getImageResource(state: State): Int = when (state) {
-        is Loading -> R.drawable.loading_animation
-        is Error ->
-            when (state.error) {
-                "Connection error" -> R.drawable.connection_error
-                else -> R.drawable.something_error
-            }
-        is Empty -> R.drawable.empty_error
-        else -> 0
-    }
-
-    // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
-    private fun getErrorText(state: State): String? = when (state) {
-        is Error ->
-            when (state.error) {
-                "Connection error" -> resources.getString(R.string.connection_error)
-                else -> resources.getString(R.string.something_error)
-            }
-        is Empty -> resources.getString(R.string.empty_error)
-        else -> null
-    }
-
-    // State.Error, State.Empty -> String
-    // State.Loaded, State.Loading -> null
-    private fun getErrorHintText(state: State): String? = when (state) {
-        is Error ->
-            when (state.error) {
-                "Connection error" -> resources.getString(R.string.connection_error_hint)
-                else -> resources.getString(R.string.something_error_hint)
-            }
-        is Empty -> resources.getString(R.string.empty_error_hint)
-        else -> null
-    }
-
-    private fun getErrorTextColor(state: State): Int = resources.getColor(
-        when (state) {
-            is Error -> R.color.error
-            is Empty -> R.color.secondary
-            else -> R.color.white
-        }
-    )
-
-    private fun getRetryButtonText(state: State): String? = when (state) {
-        is Error -> resources.getString(R.string.retry_button)
-        is Empty -> resources.getString(R.string.refresh_button)
-        else -> null
-    }
 }

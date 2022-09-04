@@ -24,7 +24,7 @@ class RepositoriesListViewModel @Inject constructor(private val repository: AppR
         loadState()
     }
 
-    fun logOut() {
+    fun onLogOutButtonPressed() {
         repository.logOut()
     }
 
@@ -38,13 +38,10 @@ class RepositoriesListViewModel @Inject constructor(private val repository: AppR
                 else
                     _state.value = State.Loaded(repositories)
 
+            } catch (exception: java.net.UnknownHostException) {
+                _state.value = State.Error("Connection error")
             } catch (exception: Exception) {
-                val errorType = exception.toString()
-                val reason = when (errorType.slice(0 until errorType.indexOf(':'))) {
-                    "java.net.UnknownHostException" -> "Connection error"
-                    else -> "Something error"
-                }
-                _state.value = State.Error(reason)
+                _state.value = State.Error("Something error")
             }
         }
     }

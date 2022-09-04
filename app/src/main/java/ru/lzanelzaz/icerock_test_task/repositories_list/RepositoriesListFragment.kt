@@ -16,11 +16,11 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import dagger.hilt.android.AndroidEntryPoint
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentListRepositoriesBinding
-import ru.lzanelzaz.icerock_test_task.getErrorHintText
-import ru.lzanelzaz.icerock_test_task.getErrorText
-import ru.lzanelzaz.icerock_test_task.getErrorTextColor
-import ru.lzanelzaz.icerock_test_task.getImageResource
-import ru.lzanelzaz.icerock_test_task.getRetryButtonText
+import ru.lzanelzaz.icerock_test_task.ui.getErrorHintText
+import ru.lzanelzaz.icerock_test_task.ui.getErrorText
+import ru.lzanelzaz.icerock_test_task.ui.getErrorTextColor
+import ru.lzanelzaz.icerock_test_task.ui.getImageResource
+import ru.lzanelzaz.icerock_test_task.ui.getRetryButtonText
 
 private typealias Loading = RepositoriesListViewModel.State.Loading
 private typealias Loaded = RepositoriesListViewModel.State.Loaded
@@ -72,14 +72,14 @@ class RepositoriesListFragment : Fragment() {
                 statusImageView.setImageResource(getImageResource(state))
                 println(getImageResource(state))
 
-                errorTextView.text = getErrorText(state)
-                errorTextView.setTextColor(getErrorTextColor(state))
+                errorTextView.text = getErrorText(requireContext(), state)
+                errorTextView.setTextColor(getErrorTextColor(requireContext(), state))
 
-                hintTextView.text = getErrorHintText(state)
+                hintTextView.text = getErrorHintText(requireContext(), state)
 
                 retryButton.visibility =
                     if (state is Loading) View.GONE else View.VISIBLE
-                retryButton.text = getRetryButtonText(state)
+                retryButton.text = getRetryButtonText(requireContext(), state)
 
                 retryButton.setOnClickListener { viewModel.onRetryButtonPressed() }
             }

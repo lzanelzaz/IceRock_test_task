@@ -20,9 +20,9 @@ import org.intellij.markdown.parser.MarkdownParser
 import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.model.RepoDetails
 import ru.lzanelzaz.icerock_test_task.databinding.FragmentRepositoryInfoBinding
-import ru.lzanelzaz.icerock_test_task.getErrorHintText
-import ru.lzanelzaz.icerock_test_task.getErrorText
-import ru.lzanelzaz.icerock_test_task.getImageResource
+import ru.lzanelzaz.icerock_test_task.ui.getErrorHintText
+import ru.lzanelzaz.icerock_test_task.ui.getErrorText
+import ru.lzanelzaz.icerock_test_task.ui.getImageResource
 
 typealias State = RepositoryInfoViewModel.State
 typealias Loading = RepositoryInfoViewModel.State.Loading
@@ -99,8 +99,8 @@ class RepositoryInfoFragment : Fragment() {
 
                 statusImageView.setImageResource(getImageResource(state))
 
-                errorTextView.text = getErrorText(state)
-                hintTextView.text = getErrorHintText(state)
+                errorTextView.text = getErrorText(requireContext(), state)
+                hintTextView.text = getErrorHintText(requireContext(), state)
 
                 retryButton.visibility =
                     if (state is Loading) View.GONE else View.VISIBLE
@@ -136,8 +136,8 @@ class RepositoryInfoFragment : Fragment() {
 
             statusImageView.setImageResource(getImageResource(readmeState))
 
-            errorTextView.text = getErrorText(readmeState)
-            hintTextView.text = getErrorHintText(readmeState)
+            errorTextView.text = getErrorText(requireContext(), readmeState)
+            hintTextView.text = getErrorHintText(requireContext(), readmeState)
 
             retryButton.visibility =
                 if (readmeState is ReadmeError) View.VISIBLE else View.GONE

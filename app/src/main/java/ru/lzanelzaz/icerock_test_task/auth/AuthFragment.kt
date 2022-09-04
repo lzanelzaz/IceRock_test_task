@@ -53,12 +53,12 @@ class AuthFragment : Fragment() {
                         if (state is Loading) null else resources.getString(R.string.sign_in_button)
 
                     personalAccessTokenHint.visibility = View.VISIBLE
-                    personalAccessTokenHint.setTextColor(getPersonalAccessTokenHintColor(state))
+                    personalAccessTokenHint.setTextColor(getPersonalAccessTokenHintColor(requireContext(), state))
                     personalAccessTokenHint.alpha =
                         if (state is Loading) 0.5F else 1F
 
                     editToken.backgroundTintList = ColorStateList.valueOf(
-                        getPersonalAccessTokenHintColor(state)
+                        getPersonalAccessTokenHintColor(requireContext(), state)
                     )
 
                     invalidTokenError.visibility =

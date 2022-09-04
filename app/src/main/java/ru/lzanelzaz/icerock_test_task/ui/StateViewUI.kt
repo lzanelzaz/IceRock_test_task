@@ -1,5 +1,7 @@
-package ru.lzanelzaz.icerock_test_task
+package ru.lzanelzaz.icerock_test_task.ui
 
+import android.content.Context
+import ru.lzanelzaz.icerock_test_task.R
 import ru.lzanelzaz.icerock_test_task.repositories_list.RepositoriesListViewModel
 import ru.lzanelzaz.icerock_test_task.repository_info.RepositoryInfoViewModel
 
@@ -37,7 +39,7 @@ fun <T> getImageResource(state: T): Int {
 
 // State.Error, State.Empty -> String
 // State.Loaded, State.Loading -> null
-fun <T> getErrorText(state: T): String? = when {
+fun <T> getErrorText(context: Context, state: T): String? = when {
     isError(state) -> {
         if (stateErrorMessage(state) == "Connection error") context.resources.getString(R.string.connection_error)
         else context.resources.getString(R.string.something_error)
@@ -48,7 +50,7 @@ fun <T> getErrorText(state: T): String? = when {
 
 // State.Error, State.Empty -> String
 // State.Loaded, State.Loading -> null
-fun <T> getErrorHintText(state: T): String? = when {
+fun <T> getErrorHintText(context: Context, state: T): String? = when {
     isError(state) -> {
         if (stateErrorMessage(state) == "Connection error") context.resources.getString(
             R.string.connection_error_hint
@@ -59,7 +61,7 @@ fun <T> getErrorHintText(state: T): String? = when {
     else -> null
 }
 
-fun <T> getErrorTextColor(state: T): Int = context.resources.getColor(
+fun <T> getErrorTextColor(context: Context, state: T): Int = context.resources.getColor(
     when {
         isError(state) -> R.color.error
         isEmpty(state) -> R.color.secondary
@@ -67,7 +69,7 @@ fun <T> getErrorTextColor(state: T): Int = context.resources.getColor(
     }
 )
 
-fun <T> getRetryButtonText(state: T): String? = when {
+fun <T> getRetryButtonText(context: Context, state: T): String? = when {
     isError(state) -> context.resources.getString(R.string.retry_button)
     isEmpty(state) -> context.resources.getString(R.string.refresh_button)
     else -> null
